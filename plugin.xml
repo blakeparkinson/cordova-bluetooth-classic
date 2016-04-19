@@ -1,27 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+<?xml version="1.0" encoding="utf-8"?>
+<plugin
+    xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.matd.bluetoothclassic"
-    version="0.0.1">
-    <name>BluetoothClassic</name>
-    <description>Description goes here</description>
-    <license>Apache 2.0</license>
-    <keywords></keywords>
-    <repo></repo>
-    <issue></issue>
+    id="cordova-bluetooth-classic"
+    version="1.0.2">
 
-    <js-module src="www/BluetoothClassicPlugin.js" name="BluetoothClassic">
-        <clobbers target="BluetoothClassic" />
+    <name>Bluetooth Classic</name>
+    <description></description>
+    <license>Apache 2.0</license>
+    <keywords>keywords</keywords>
+
+    <repo>https://github.com/blakeparkinson/cordova-bluetooth-classic.git</repo>
+    <issue>https://github.com/blakeparkinson/cordova-bluetooth-classic/issues</issue>
+
+    <js-module src="www/BluetoothClassicPlugin.js" name="bluetoothclassicplugin">
+        <clobbers target="bluetoothclassicplugin" />
     </js-module>
 
-    <!-- android -->
-    <platform name="android">
-        <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="BluetoothClassic" >
-                <param name="android-package" value="BluetoothClassic"/>
+    <platform name="ios">
+
+        <config-file target="config.xml">
+            <feature name="BluetoothClassicPlugin">
+                <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
             </feature>
         </config-file>
-        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/" />
+
+        <header-file src="src/ios/BlueToothClassicPlugin.h" target-dir="BluetoothClassicPlugin" />
+        <source-file src="src/ios/BluetoothClassicPlugin.m" target-dir="BluetoothClassicPlugin" />
+
+        <!-- frameworks -->
+        <framework src="CoreBluetooth.framework" />
+
     </platform>
 
+    <platform name="BluetoothClassicPlugin">
+        <config-file target="res/xml/config.xml">
+            <feature name="BluetoothClassicPlugin" >
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/org/apache/cordova/BluetoothClassic" />
+
+        <js-module src="BluetoothClassicPlugin.js" name="BluetoothClassicPlugin">
+            <runs />
+        </js-module>
+    </platform>
 </plugin>
