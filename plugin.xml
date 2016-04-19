@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.matd.bluetoothclassic"
+    version="0.0.1">
+    <name>BluetoothClassic</name>
+    <description>Description goes here</description>
+    <license>Apache 2.0</license>
+    <keywords></keywords>
+    <repo></repo>
+    <issue></issue>
+
+    <js-module src="www/BluetoothClassicPlugin.js" name="BluetoothClassic">
+        <clobbers target="BluetoothClassic" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="BluetoothClassic" >
+                <param name="android-package" value="BluetoothClassic"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/BluetoothClassic.java" target-dir="src/" />
+    </platform>
+
+</plugin>
