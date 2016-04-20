@@ -17,19 +17,6 @@
         <clobbers target="BluetoothClassic" />
     </js-module>
 
-    <platform name="ios">
-
-        <config-file target="config.xml">
-            <feature name="BluetoothClassicPlugin">
-                <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
-            </feature>
-        </config-file>
-
-
-        <!-- frameworks -->
-        <framework src="CoreBluetooth.framework" />
-
-    </platform>
 
     <platform name="BluetoothClassicPlugin">
         <config-file target="res/xml/config.xml">
