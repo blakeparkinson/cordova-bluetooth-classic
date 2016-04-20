@@ -30,14 +30,20 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private CallbackContext connectCallback;
 
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+      boolean validAction = true;
       if (action.equals(CONNECT)) {
         connect(args, callbackContext);
       }
+      else{
+        validAction = false;
+      }
+      return validAction;
     }
 
     private void connect(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         String macAddress = args.getString(0);
         //BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+        callbackContext.error("got here");
 
     }
 
