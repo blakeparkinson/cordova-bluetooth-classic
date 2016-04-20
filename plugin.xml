@@ -18,7 +18,7 @@
     </js-module>
 
 
-    <platform name="BluetoothClassicPlugin">
+    <platform name="android">
         <config-file target="res/xml/config.xml">
             <feature name="BluetoothClassicPlugin" >
             </feature>
