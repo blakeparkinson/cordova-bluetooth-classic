@@ -26,8 +26,7 @@
     <platform name="android">
         <config-file target="res/xml/config.xml">
             <feature name="BluetoothClassicPlugin" >
-              <param name="android-package"
-                      value="com.blake.plugin.BluetoothClassicPlugin"/>
+              <param name="android-package" value="BluetoothClassicPlugin"/>
             </feature>
         </config-file>
 
