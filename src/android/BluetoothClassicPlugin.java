@@ -33,7 +33,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       LOG.d(TAG, "action = " + action);
       if (action.equals(CONNECT)) {
-        connect(args, callbackContext)
+        connect(args, callbackContext);
       }
     }
 
