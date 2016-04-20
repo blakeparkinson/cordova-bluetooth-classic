@@ -14,7 +14,7 @@
     <issue>https://github.com/blakeparkinson/cordova-bluetooth-classic/issues</issue>
 
     <js-module src="www/BluetoothClassicPlugin.js" name="bluetoothclassicplugin">
-        <clobbers target="bluetoothclassicplugin" />
+        <clobbers target="BluetoothClassic" />
     </js-module>
 
     <platform name="ios">
