@@ -13,6 +13,11 @@
     <repo>https://github.com/blakeparkinson/cordova-bluetooth-classic.git</repo>
     <issue>https://github.com/blakeparkinson/cordova-bluetooth-classic/issues</issue>
 
+    <!-- cordova -->
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
     <js-module src="www/BluetoothClassicPlugin.js" name="BluetoothClassicPlugin">
         <clobbers target="BluetoothClassic" />
     </js-module>
@@ -21,6 +26,8 @@
     <platform name="android">
         <config-file target="res/xml/config.xml">
             <feature name="BluetoothClassicPlugin" >
+              <param name="android-package"
+                      value="com.blake.plugin.BluetoothClassicPlugin"/>
             </feature>
         </config-file>
 
