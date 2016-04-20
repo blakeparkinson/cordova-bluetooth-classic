@@ -25,9 +25,5 @@
         </config-file>
 
         <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/org/apache/cordova/BluetoothClassic" />
-
-        <js-module src="BluetoothClassicPlugin.js" name="BluetoothClassicPlugin">
-            <runs />
-        </js-module>
     </platform>
 </plugin>
