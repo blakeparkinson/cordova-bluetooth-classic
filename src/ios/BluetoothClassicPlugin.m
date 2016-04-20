@@ -5,9 +5,9 @@
 //  Copyright (c) 2014 Nathan Stryker. All rights reserved.
 //
 
-#import "BluetoothDongle.h"
+#import "BluetoothClassicPlugin.h"
 
-@interface BluetoothDongle()
+@interface BluetoothClassicPlugin()
 
 @property (nonatomic, strong) EASession             *session;
 @property (nonatomic, strong) NSMutableData         *readData;
@@ -24,7 +24,7 @@
 
 @end
 
-@implementation BluetoothDongle
+@implementation BluetoothClassicPlugin
 
 #define EAD_INPUT_BUFFER_SIZE 2048
 
