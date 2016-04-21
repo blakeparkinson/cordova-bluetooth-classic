@@ -6,7 +6,7 @@ module.exports = {
     console.log('made it');
     cordova.exec(success, failure, 'BluetoothClassicPlugin', 'connect', [id]);
   },
-  write: function(data, success, failute) {
+  write: function(data, success, failure) {
     // convert to ArrayBuffer
     if (typeof data === 'string') {
       data = stringToArrayBuffer(data);
