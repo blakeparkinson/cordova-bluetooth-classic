@@ -30,7 +30,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     // actions
     private static final String CONNECT = "connect";
-    private static final String SEND = "send";
+    private static final String WRITE = "write";
     private static final String READ = "read";
 
 
@@ -59,9 +59,9 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       if (action.equals(CONNECT)) {
         connect(args, callbackContext);
       }
-      else if (action.equals(SEND)) {
+      else if (action.equals(WRITE)) {
         byte[] data = args.getArrayBuffer(0);
-        send(data, callbackContext);
+        write(data, callbackContext);
       }
       else if (action.equals(READ)) {
         callbackContext.success(read());
@@ -72,7 +72,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       return validAction;
     }
 
-    private void send(byte[] out, CallbackContext callbackContext){
+    private void write(byte[] out, CallbackContext callbackContext){
       if (mOutputStream == null) {
             return;
         }
