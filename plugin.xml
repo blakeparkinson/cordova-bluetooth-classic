@@ -5,7 +5,7 @@
     id="cordova-bluetooth-classic"
     version="1.0.2">
 
-    <name>Bluetooth Classic</name>
+    <name>BluetoothClassic</name>
     <description></description>
     <license>Apache 2.0</license>
     <keywords>keywords</keywords>
@@ -25,7 +25,7 @@
 
     <platform name="android">
         <config-file target="res/xml/config.xml">
-            <feature name="BluetoothClassicPlugin" >
+            <feature name="cordova-bluetooth-classic" >
               <param name="android-package" value="BluetoothClassicPlugin"/>
             </feature>
         </config-file>
