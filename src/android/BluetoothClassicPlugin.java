@@ -43,7 +43,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private OutputStream mOutputStream;
     private InputStream mInputStream;
 
-    private byte rxBuffer = new byte[1024*25];
+    private byte[] rxBuffer = new byte[1024*25];
 
     // callbacks
     private CallbackContext connectCallback;
@@ -156,13 +156,14 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         }
     }
 
-    private String read(CallbackContext callbackContext) throws JSONException {
+    private void read(CallbackContext callbackContext) throws JSONException {
+      try{
+
         int length = mInputStream.read(rxBuffer);
-        try{
-          JSONObject json = new JSONObject();
+          /*JSONObject json = new JSONObject();
           json.put("data", rxBuffer);
-          json.put("length", length);
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+          json.put("length", length);*/
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, rxBuffer));
         }
         catch(IOException err){
           err.printStackTrace();
@@ -171,8 +172,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
         }
-
-        return json;
     }
 
 }
