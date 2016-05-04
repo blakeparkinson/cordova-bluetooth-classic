@@ -3,15 +3,16 @@
 module.exports = {
 
   connect: function(id, success, failure) {
-    console.log('made it');
+    console.log('Connecting to Device with ID: '+id);
     cordova.exec(success, failure, 'BluetoothClassicPlugin', 'connect', [id]);
   },
+
   write: function(data, success, failure) {
     // convert to ArrayBuffer
     if (typeof data === 'string') {
       data = stringToArrayBuffer(data);
     } else if (data instanceof Array) {
-      // assuming array of interger
+      // assuming array of UNSIGNED BYTES
       data = new Uint8Array(data).buffer;
     } else if (data instanceof Uint8Array) {
       data = data.buffer;
