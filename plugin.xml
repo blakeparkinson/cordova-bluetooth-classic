@@ -30,7 +30,7 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/org/apache/cordova/BluetoothClassic" />
+        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/org/alpinelabs/cordova/BluetoothClassic" />
 
     </platform>
 </plugin>
