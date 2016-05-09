@@ -1,11 +1,11 @@
 #import "BluetoothClassicPlugin.h"
 #import <Cordova/CDV.h>
 
-@interface BluetoothClassicPlugin (){
-  EASession* _dataSession;
-  uint8_t* _rxBuffer;
-  uint32_t _rxBytes;
-}
+@interface BluetoothClassicPlugin ()
+
+@property (nonatomic, strong) EASession *_dataSession;
+@property (nonatomic, strong) uint8_t   *_rxBuffer;
+@property (nonatomic, strong) uint32_t  _rxBytes;
 
 @end
 

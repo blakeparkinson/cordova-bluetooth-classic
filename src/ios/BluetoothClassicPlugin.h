@@ -4,9 +4,7 @@
 #import <Cordova/CDV.h>
 #import <ExternalAccessory/ExternalAccessory.h>
 
-@interface BluetoothClassicPlugin : CDVPlugin <CBCentralManagerDelegate, CBPeripheralDelegate, DFUOperationsDelegate>{
-
-}
+@interface BluetoothClassicPlugin : CDVPlugin <EAAccessoryDelegate, NSStreamDelegate>
 
 - (void)connect: (CDVInvokedUrlCommand*)command;
 - (void)write: (CDVInvokedUrlCommand*)command;
