@@ -40,8 +40,8 @@
           <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
         </feature>
 
-        <header-file src="src/ios/BluetoothClassicPlugin.h" target-dir="BluetoothClassicPlugin" />
-        <source-file src="src/ios/BluetoothClassicPlugin.m" target-dir="BluetoothClassicPlugin" />
+        <header-file src="src/ios/BluetoothClassicPlugin.h" />
+        <source-file src="src/ios/BluetoothClassicPlugin.m" />
 
         <framework src="ExternalAccessory.framework" weak="true"/>
       </config-file>
