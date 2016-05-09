@@ -3,7 +3,7 @@
 module.exports = {
 
   connect: function(id, success, failure) {
-    console.log('Connecting to Device with ID: '+id);
+    console.log('Connecting over BTClassic to Device with ID: '+id);
     cordova.exec(success, failure, 'BluetoothClassicPlugin', 'connect', [id]);
   },
 

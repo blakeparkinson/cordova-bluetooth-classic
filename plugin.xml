@@ -24,13 +24,13 @@
 
 
     <platform name="android">
-        <config-file target="res/xml/config.xml">
-            <feature name="cordova-bluetooth-classic" >
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="BluetoothClassicPlugin" >
               <param name="android-package" value="BluetoothClassicPlugin"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/org/apache/cordova/BluetoothClassic" />
+        <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/com/alpinelabs/cordova/BluetoothClassic" />
 
     </platform>
 </plugin>
