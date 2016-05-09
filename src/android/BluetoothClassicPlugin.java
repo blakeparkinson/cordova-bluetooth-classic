@@ -112,28 +112,43 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         Log.v("macAddress", macAddress);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
         try {
-                mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
-                mState = STATE_CONNECTING;
+          mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
+        } catch (Exception e){
+          String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
+          JSONObject json = new JSONObject();
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+        }
+
+
+
+        mState = STATE_CONNECTING;
+        try {
+              mSocket.connect();
+              mOutputStream = mSocket.getOutputStream();
+              mInputStream = mSocket.getInputStream();
+              mState = STATE_CONNECTED;
+              String message = String.format("successfully connected to bluetooth classic device: %s", macAddress);
+              JSONObject json = new JSONObject();
+              json.put("message", message);
+              callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+
+          } catch (IOException e) {
+              e.printStackTrace();
+
+              try {
+                mSocket =(BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
                 mSocket.connect();
-                mOutputStream = mSocket.getOutputStream();
-                mInputStream = mSocket.getInputStream();
-                mState = STATE_CONNECTED;
-                String message = String.format("successfully connected to bluetooth classic device: %s", macAddress);
-                JSONObject json = new JSONObject();
-                json.put("message", message);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-
-                closeSocket();
-                mState = STATE_DISCONNECTED;
-                String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
-                JSONObject json = new JSONObject();
-                json.put("message", message);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+              } catch (Exception e2){
+              closeSocket();
+              mState = STATE_DISCONNECTED;
+              String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
+              JSONObject json = new JSONObject();
+              json.put("message", message);
+              callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
             }
-
+          }
+”
         }
 
     }
