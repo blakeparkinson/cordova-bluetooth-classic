@@ -36,14 +36,14 @@
 
     <platform name="ios">
       <config-file target="config.xml" parent="/*">
-        <feature name="BluetoothClassicPlugin" >
+        <feature name="BluetoothClassic" >
           <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
         </feature>
 
         <header-file src="src/ios/BluetoothClassicPlugin.h" target-dir="BluetoothClassicPlugin" />
         <source-file src="src/ios/BluetoothClassicPlugin.m" target-dir="BluetoothClassicPlugin" />
 
-        <framework src="EAAccessory.framework" />
+        <framework src="ExternalAccessory.framework" weak="true"/>
       </config-file>
     </platform>
 </plugin>
