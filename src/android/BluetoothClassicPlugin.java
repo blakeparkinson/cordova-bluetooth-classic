@@ -148,7 +148,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
               callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
             }
           }
-”
         }
 
     }
