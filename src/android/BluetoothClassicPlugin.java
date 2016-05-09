@@ -52,6 +52,16 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final UUID SERVICE_UUID =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          BluetoothDevice device = intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
+          Parcelable[] uuidExtra = intent.getParcelableArrayExtra("android.bluetooth.device.extra.UUID");
+
+          System.out.format("Received some shit in the receiver: %d %n", uuidExtra.length);
+        }
+    };
+
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       if (bluetoothAdapter == null) {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -111,6 +121,10 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         String macAddress = args.getString(0);
         Log.v("macAddress", macAddress);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+
+        String action = "android.bleutooth.device.action.UUID";
+        IntentFilter filter = new IntentFilter(action);
+        registerReceiver(mReceiver, filter);
 
         try {
           mSocket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
