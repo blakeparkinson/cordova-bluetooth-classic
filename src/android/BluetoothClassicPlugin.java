@@ -114,13 +114,15 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
         try {
           mSocket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+          if(mSocket == null){
+            mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
+          }
         } catch (Exception e){
           String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
           JSONObject json = new JSONObject();
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
         }
-
 
 
         mState = STATE_CONNECTING;
