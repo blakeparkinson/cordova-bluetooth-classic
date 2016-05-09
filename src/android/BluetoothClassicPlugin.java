@@ -111,8 +111,9 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         String macAddress = args.getString(0);
         Log.v("macAddress", macAddress);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+
         try {
-          mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
+          mSocket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
         } catch (Exception e){
           String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
           JSONObject json = new JSONObject();
