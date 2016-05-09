@@ -1,9 +1,15 @@
+#import "BluetoothClassicPlugin.h"
+#import <Cordova/CDV.h>
+
 @interface BluetoothClassicPlugin (){
-    EASession* _dataSession;
-    uint8_t* _rxBuffer;
-    uint32_t _rxBytes;
+  EASession* _dataSession;
+  uint8_t* _rxBuffer;
+  uint32_t _rxBytes;
 }
 
+@end
+
+@implementation BluetoothClassicPlugin
 - (void)pluginInitialize {
   NSLog(@"Cordova Bluetooth Classic Plugin");
   NSLog(@"(c)2016 Sam Musso");
@@ -97,3 +103,5 @@
    // Report disconnection to plugin
   }
 }
+
+@end
