@@ -35,7 +35,7 @@
     </platform>
 
     <platform name="ios">
-      <config-file target="config.xml" partent="/*">
+      <config-file target="config.xml" parent="/*">
         <feature name="BluetoothClassicPlugin" >
           <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
         </feature>
