@@ -42,6 +42,8 @@
 
         <header-file src="src/ios/BluetoothClassicPlugin.h" target-dir="BluetoothClassicPlugin" />
         <source-file src="src/ios/BluetoothClassicPlugin.m" target-dir="BluetoothClassicPlugin" />
+
+        <framework src="EAAccessory.framework" />
       </config-file>
     </platform>
 </plugin>
