@@ -36,7 +36,7 @@
     <platform name="ios">
 
         <config-file target="config.xml" parent="/*">
-            <feature name="BluetoothDongle">
+            <feature name="BluetoothClassicPlugin">
                 <param name="ios-package" value="BluetoothClassicPlugin"/>
             </feature>
         </config-file>
