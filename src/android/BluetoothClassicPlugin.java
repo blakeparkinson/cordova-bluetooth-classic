@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothSocket;
 import android.content.IntentFilter;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.content.BroadcastReceiver;
 
 import android.provider.Settings;
 import android.util.Log;
@@ -122,22 +124,33 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         Log.v("macAddress", macAddress);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
 
+        System.out.format("Got Remote Device %s%n", device.getName());
+
         String action = "android.bleutooth.device.action.UUID";
         IntentFilter filter = new IntentFilter(action);
-        registerReceiver(mReceiver, filter);
+        this.cordova.getActivity().getApplicationContext().registerReceiver(mReceiver, filter);
 
         try {
-          mSocket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
-          if(mSocket == null){
+          System.out.println("Retrieving socket 1");
             mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
-          }
+
         } catch (Exception e){
+          e.printStackTrace();
           String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
           JSONObject json = new JSONObject();
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          return;
         }
 
+        if(mSocket == null){
+          System.out.println("Socket still null. Returning...");
+          String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
+          JSONObject json = new JSONObject();
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          return;
+        }
 
         mState = STATE_CONNECTING;
         try {
@@ -191,9 +204,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       try{
 
         int length = mInputStream.read(rxBuffer);
-          /*JSONObject json = new JSONObject();
-          json.put("data", rxBuffer);
-          json.put("length", length);*/
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, rxBuffer));
         }
         catch(IOException err){
