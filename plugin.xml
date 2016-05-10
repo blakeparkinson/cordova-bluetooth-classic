@@ -33,17 +33,15 @@
         <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/com/alpinelabs/cordova/BluetoothClassic" />
 
     </platform>
-
     <platform name="ios">
-      <config-file target="config.xml" parent="/*">
-        <feature name="BluetoothClassic" >
-          <param name="ios-package" value="BluetoothClassicPlugin" onload="true"/>
-        </feature>
 
-        <header-file src="src/ios/BluetoothClassicPlugin.h" />
-        <source-file src="src/ios/BluetoothClassicPlugin.m" />
-
-        <framework src="ExternalAccessory.framework" weak="true"/>
-      </config-file>
+        <config-file target="config.xml" parent="/*">
+            <feature name="BluetoothDongle">
+                <param name="ios-package" value="BluetoothClassicPlugin"/>
+            </feature>
+        </config-file>
+        <framework src="ExternalAccessory.framework" weak="true" />
+        <header-file src="src/ios/BluetoothClassicPlugin.h"/>
+        <source-file src="src/ios/BluetoothClassicPlugin.m"/>
     </platform>
 </plugin>
