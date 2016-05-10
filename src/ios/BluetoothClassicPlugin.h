@@ -1,13 +1,33 @@
-#ifndef BLECentralPlugin_h
-#define BLECentralPlugin_h
+//
+//  ViewController.h
+//  BluetoothDongle
+//
+//  Created by Nathan Stryker on 6/10/14.
+//  Copyright (c) 2014 Nathan Stryker. All rights reserved.
+//
 
-#import <Cordova/CDV.h>
+#import <UIKit/UIKit.h>
 #import <ExternalAccessory/ExternalAccessory.h>
+#import <Cordova/CDVPlugin.h>
 
 @interface BluetoothClassicPlugin : CDVPlugin <EAAccessoryDelegate, NSStreamDelegate>
 
-- (void)connect: (CDVInvokedUrlCommand*)command;
-- (void)write: (CDVInvokedUrlCommand*)command;
-- (void)read: (CDVInvokedUrlCommand*)command;
+//get the currently connected devices.
+- (void)list:(CDVInvokedUrlCommand *)command;
 
-#endif
+//call to connect to a bluetooth device
+- (void)connect:(CDVInvokedUrlCommand *)command;
+
+//close the connection
+- (void)closeSession:(CDVInvokedUrlCommand *)command;
+
+//call to disconnect to bt device
+- (void)disconnect:(CDVInvokedUrlCommand *)command;
+
+//Returns indicating if we are connected to a BT device
+- (void)isConnected:(CDVInvokedUrlCommand*)command;
+
+//subscribe to data stream
+- (void)subscribe:(CDVInvokedUrlCommand *)command;
+
+@end
