@@ -1,11 +1,12 @@
 #import "BluetoothClassicPlugin.h"
 #import <Cordova/CDV.h>
 
-@interface BluetoothClassicPlugin ()
+@interface BluetoothClassicPlugin(){
+  uint8_t*   rxBuffer;
+  uint32_t  rxBytes;
+}
 
-@property (nonatomic, strong) EASession *_dataSession;
-@property (nonatomic, strong) uint8_t   *_rxBuffer;
-@property (nonatomic, strong) uint32_t  _rxBytes;
+@property (nonatomic, strong) EASession *dataSession;
 
 @end
 
@@ -13,7 +14,7 @@
 - (void)pluginInitialize {
   NSLog(@"Cordova Bluetooth Classic Plugin");
   NSLog(@"(c)2016 Sam Musso");
-  _rxBuffer = malloc(1024 * 25);
+  rxBuffer = (uint8_t*) malloc(1024 * 25);
   [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(accessoryNotification:)
@@ -40,17 +41,12 @@
 - (void)read: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
 
-  unsigned long length = 0;
-  len = [[_dataSession inputStream] read:_rxBuffer maxLength:sizeof(_rxBuffer)];
+  unsigned long len = 0;
+  len = [[_dataSession inputStream] read:rxBuffer maxLength:sizeof(rxBuffer)];
 
-  NSData *data = [NSData dataWithBytes:_rxBuffer length:len];
+  NSData *data = [NSData dataWithBytes:rxBuffer length:len];
   pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)didReceiveMemoryWarning{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)accessoryNotification:(NSNotification *)notification{
