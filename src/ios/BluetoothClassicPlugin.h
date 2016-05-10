@@ -9,5 +9,6 @@
 - (void)connect: (CDVInvokedUrlCommand*)command;
 - (void)write: (CDVInvokedUrlCommand*)command;
 - (void)read: (CDVInvokedUrlCommand*)command;
+@end
 
 #endif
