@@ -6,7 +6,8 @@
   uint32_t  rxBytes;
 }
 
-@property (nonatomic, strong) EASession *dataSession;
+@property (nonatomic, strong) EASession     *dataSession;
+@property (nonatomic, strong) NSMutableData *readData;
 
 @end
 
@@ -41,12 +42,44 @@
 - (void)read: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
 
-  unsigned long len = 0;
-  len = [[_dataSession inputStream] read:rxBuffer maxLength:sizeof(rxBuffer)];
-
-  NSData *data = [NSData dataWithBytes:rxBuffer length:len];
+  NSData *data = [NSData dataWithData:_readData];
   pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+  _readData = nil;
+}
+
+- (void)readReceivedData{
+
+  NSInteger bytesRead = [[_dataSession inputStream] read:rxBuffer maxLength:sizeof(rxBuffer)];
+
+  if(_readData == nil){
+    _readData = [[NSMutableData alloc] init];
+  }
+
+  [_readData appendBytes:(void *)rxBuffer length:bytesRead];
+    uint8_t *s = (uint8_t*)self.readData.bytes;
+
+    NSString *debugString = [[NSString alloc] init];
+
+    for(unsigned int i = 0; i < _readData.length; i++){
+        debugString = [debugString stringByAppendingFormat:@"%02x", s[i]];
+        debugString = [debugString stringByAppendingFormat:@""];
+    }
+
+    NSLog(@"Data: %@", debugString);
+
+  NSLog(@"Buffered in %zd bytes", bytesRead);
+}
+
+- (void)stream:(NSStream*)theStream handleEvent:(NSStreamEvent)streamEvent{
+  switch(streamEvent){
+    case NSStreamEventHasBytesAvailable:
+      [self readReceivedData];
+      break;
+    default:
+      break;
+  }
 }
 
 - (void)accessoryNotification:(NSNotification *)notification{
