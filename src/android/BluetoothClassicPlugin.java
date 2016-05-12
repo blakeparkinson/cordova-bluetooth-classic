@@ -203,8 +203,16 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private void read(CallbackContext callbackContext) throws JSONException {
       try{
 
+
+        System.out.format("Bytes available to be read: %d\n", mInputStream.available());
         int length = mInputStream.read(rxBuffer);
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, rxBuffer));
+        // String data = new String(rxBuffer);
+        for (int i = 0; i < length; i++){
+            System.out.format("%d ", (int)rxBuffer[i]);
+        }
+        System.out.println();
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, rxBuffer));
         }
         catch(IOException err){
           err.printStackTrace();
