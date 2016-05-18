@@ -46,6 +46,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private InputStream mInputStream;
 
     private byte[] rxBuffer = new byte[1024*25];
+    private byte[] jpgCpy;
 
     // callbacks
     private CallbackContext connectCallback;
@@ -121,10 +122,10 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       if (mState == STATE_DISCONNECTED) {
 
         String macAddress = args.getString(0);
-        Log.v("macAddress", macAddress);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
 
         System.out.format("Got Remote Device %s%n", device.getName());
+        System.out.format("%s%n", device.toString());
 
         String action = "android.bleutooth.device.action.UUID";
         IntentFilter filter = new IntentFilter(action);
@@ -135,6 +136,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             mSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
 
         } catch (Exception e){
+          System.out.format("Failed to retrieve Socket 1 with SERVICE_UUID: %s", SERVICE_UUID);
           e.printStackTrace();
           String message = String.format("failed to connect to bluetooth classic device: %s", macAddress);
           JSONObject json = new JSONObject();
@@ -154,6 +156,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
         mState = STATE_CONNECTING;
         try {
+              System.out.format("Attemping to connect to bluetooth classic device: %s", macAddress);
               mSocket.connect();
               mOutputStream = mSocket.getOutputStream();
               mInputStream = mSocket.getInputStream();
@@ -167,6 +170,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
               e.printStackTrace();
 
               try {
+                System.out.format("Classic connect attempt 1 failed. Entering fallback. Attempting to connect to device: %s", macAddress);
                 mSocket =(BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
                 mSocket.connect();
               } catch (Exception e2){
@@ -206,13 +210,19 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
         System.out.format("Bytes available to be read: %d\n", mInputStream.available());
         int length = mInputStream.read(rxBuffer);
+        jpgCpy = new byte[length];
+
+        for(int i = 0; i < length; i++){
+          jpgCpy[i] = rxBuffer[i];
+        }
+
         // String data = new String(rxBuffer);
-        for (int i = 0; i < length; i++){
+        /*for (int i = 0; i < length; i++){
             System.out.format("%d ", (int)rxBuffer[i]);
         }
-        System.out.println();
+        System.out.println();*/
 
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, rxBuffer));
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, jpgCpy));
         }
         catch(IOException err){
           err.printStackTrace();
