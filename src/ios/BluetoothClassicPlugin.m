@@ -51,7 +51,7 @@
 
 - (void)readReceivedData{
 
-  NSInteger bytesRead = [[_dataSession inputStream] read:rxBuffer maxLength:sizeof(rxBuffer)];
+  NSInteger bytesRead = [[_dataSession inputStream] read:rxBuffer maxLength:(1024)];
 
   if(_readData == nil){
     _readData = [[NSMutableData alloc] init];
@@ -62,12 +62,12 @@
 
     NSString *debugString = [[NSString alloc] init];
 
-    for(unsigned int i = 0; i < _readData.length; i++){
+    /*for(unsigned int i = 0; i < _readData.length; i++){
         debugString = [debugString stringByAppendingFormat:@"%02x", s[i]];
         debugString = [debugString stringByAppendingFormat:@""];
-    }
+    }*/
 
-    NSLog(@"Data: %@", debugString);
+    //NSLog(@"Data: %@", debugString);
 
   NSLog(@"Buffered in %zd bytes", bytesRead);
 }
