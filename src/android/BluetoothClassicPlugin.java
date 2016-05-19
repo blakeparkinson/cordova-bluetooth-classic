@@ -34,6 +34,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final String CONNECT = "connect";
     private static final String WRITE = "write";
     private static final String READ = "read";
+    private static final String DISCONNECT = "disconnect";
 
 
     private static final int STATE_DISCONNECTED = 0;
@@ -68,7 +69,8 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       if (bluetoothAdapter == null) {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        }
+      }
+
       boolean validAction = true;
       if (action.equals(CONNECT)) {
         connect(args, callbackContext);
@@ -79,6 +81,9 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       }
       else if (action.equals(READ)) {
         read(callbackContext);
+      }
+      else if (action.equals(DISCONNECT)){
+        disconnect(callbackContext);
       }
       else{
         validAction = false;
@@ -96,9 +101,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             JSONObject json = new JSONObject();
             json.put("message", message);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
 
@@ -114,8 +116,20 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             catch(JSONException err2){
               err2.printStackTrace();
             }
-
         }
+    }
+
+    private void disconnect(CallbackContext callbackContext) throws JSONException {
+      cmdDisconnect();
+
+      try {
+        String message = String.format("Successfully disconnected to bluetooth classic device.");
+        JSONObject json = new JSONObject();
+        json.put("message", message);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+      } catch (Exception e){
+        callbackContext.success();
+      }
     }
 
     private void connect(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
@@ -183,7 +197,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             }
           }
         }
-
     }
 
     private void cmdDisconnect() {

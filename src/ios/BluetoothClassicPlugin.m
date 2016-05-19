@@ -49,6 +49,20 @@
   _readData = nil;
 }
 
+- (void)disconnect: (CDVInvokedUrlCommand*)command {
+  CDVPluginResult *pluginResult = nil;
+
+  [[_dataSession inputStream] close];
+  [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  [[_dataSession inputStream] setDelegate:nil];
+
+  _dataSession = nil;
+  _readData = nil;
+
+  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)readReceivedData{
 
   NSInteger bytesRead = [[_dataSession inputStream] read:rxBuffer maxLength:(1024)];
