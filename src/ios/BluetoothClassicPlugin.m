@@ -58,8 +58,6 @@
   [[_dataSession inputStream] setDelegate:nil];
   [[_dataSession inputStream] close];
 
-  [_dataSession release];
-  [_myAccessory release];
   _myAccessory = nil;
   _dataSession = nil;
   _readData = nil;
