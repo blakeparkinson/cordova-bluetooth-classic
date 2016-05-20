@@ -73,7 +73,6 @@
   if(_readData == nil){
     _readData = [[NSMutableData alloc] init];
   }
-
   [_readData appendBytes:(void *)rxBuffer length:bytesRead];
     uint8_t *s = (uint8_t*)self.readData.bytes;
 
