@@ -6,6 +6,7 @@
   uint32_t  rxBytes;
 }
 
+@property (nonatomic, strong) EAAccessory   *myAccessory
 @property (nonatomic, strong) EASession     *dataSession;
 @property (nonatomic, strong) NSMutableData *readData;
 
@@ -56,6 +57,8 @@
   [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
   [[_dataSession inputStream] setDelegate:nil];
 
+  _myAccessory.Dispose();
+  _dataSession.Dispose();
   _dataSession = nil;
   _readData = nil;
 
@@ -122,6 +125,7 @@
   }
   // create data session if we found a matching accessory
   if (accessory){
+      _myAccessory = accessory;
       _dataSession = [[EASession alloc] initWithAccessory:accessory
                                               forProtocol:protocolString];
       if (_dataSession){

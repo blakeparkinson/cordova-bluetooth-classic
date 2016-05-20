@@ -201,6 +201,8 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     private void cmdDisconnect() {
         if (mState != STATE_DISCONNECTED) {
+            try {mOutputStream.close();} catch (Exception e) {}
+            try {mInputStream.close();} catch (Exception e) {}
             closeSocket();
             mState = STATE_DISCONNECTED;
         }
