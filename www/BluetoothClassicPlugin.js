@@ -23,7 +23,7 @@ module.exports = {
 
   read: function(success, failure) {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "read", []);
-  }
+  },
 
   disconnect: function(success, failure){
     cordova.exec(success, failure, "BluetoothClassicPlugin", "disconnect", []);
