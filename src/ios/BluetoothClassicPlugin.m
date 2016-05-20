@@ -6,7 +6,7 @@
   uint32_t  rxBytes;
 }
 
-@property (nonatomic, strong) EAAccessory   *myAccessory
+@property (nonatomic, strong) EAAccessory   *myAccessory;
 @property (nonatomic, strong) EASession     *dataSession;
 @property (nonatomic, strong) NSMutableData *readData;
 
