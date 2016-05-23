@@ -26,6 +26,13 @@
   [super pluginInitialize];
 }
 
+- (void)onAppTerminate
+{
+    free(rxBuffer);
+    _dataSession = nil;
+    _readData = nil;
+}
+
 - (void)connect: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
   [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
@@ -43,9 +50,13 @@
 - (void)read: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
 
-  NSData *data = [NSData dataWithData:_readData];
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+  if(_readData != nil){
+    NSData *data = [NSData dataWithData:_readData];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+  }else{
+      // We either have not received data. Possibly disconnected
+  }
 
   _readData = nil;
 }
