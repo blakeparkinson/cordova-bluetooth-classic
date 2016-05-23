@@ -53,16 +53,13 @@
 - (void)disconnect: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
 
-
   [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
   [[_dataSession inputStream] setDelegate:nil];
   [[_dataSession inputStream] close];
 
-  [_dataSession release];
-  [_myAccessory release];
-  _myAccessory = nil;
+ // _myAccessory = nil;
   _dataSession = nil;
-  _readData = nil;
+ // _readData = nil;
 
   pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
