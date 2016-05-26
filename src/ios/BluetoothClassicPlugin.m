@@ -6,9 +6,11 @@
   uint32_t  rxBytes;
 }
 
-@property (nonatomic, strong) EAAccessory   *myAccessory;
-@property (nonatomic, strong) EASession     *dataSession;
-@property (nonatomic, strong) NSMutableData *readData;
+@property (nonatomic, strong) EAAccessory*          myAccessory;
+@property (nonatomic, strong) EASession*            dataSession;
+@property (nonatomic, strong) NSMutableData*        readData;
+@property (nonatomic, strong) NSMutableDictionary*  connectCallbacks;
+@property (nonatomic, strong) NSMutableDictionary*  disconnectCallbacks;
 
 @end
 
@@ -35,7 +37,8 @@
 
 - (void)connect: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
-  [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
+
+  [self connectToAccessory];
 
   pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -149,7 +152,8 @@
           [self setConnectionStatus:NO];
       }
   }else{
-      [self setConnectionStatus:NO];
+    [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
+    [self setConnectionStatus:NO];
   }
 }
 

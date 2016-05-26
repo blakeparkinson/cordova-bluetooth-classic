@@ -36,11 +36,11 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final String READ = "read";
     private static final String DISCONNECT = "disconnect";
 
-
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
     private static final int STATE_TEST = 3;
+    
     private int mState;
     private BluetoothSocket mSocket;
     private OutputStream mOutputStream;
@@ -51,6 +51,8 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     // callbacks
     private CallbackContext connectCallback;
+    private CallbackContext disconnectCallback;
+
     private BluetoothAdapter bluetoothAdapter;
 
     private static final UUID SERVICE_UUID =
