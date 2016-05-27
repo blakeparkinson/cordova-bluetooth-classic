@@ -40,7 +40,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
     private static final int STATE_TEST = 3;
-    
+
     private int mState;
     private BluetoothSocket mSocket;
     private OutputStream mOutputStream;
@@ -57,6 +57,12 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     private static final UUID SERVICE_UUID =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+    @Override
+    public void onDestroy() {
+          cmdDisconnect();
+          super.onDestroy();
+    }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -232,12 +238,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         for(int i = 0; i < length; i++){
           jpgCpy[i] = rxBuffer[i];
         }
-
-        // String data = new String(rxBuffer);
-        /*for (int i = 0; i < length; i++){
-            System.out.format("%d ", (int)rxBuffer[i]);
-        }
-        System.out.println();*/
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, jpgCpy));
         }
