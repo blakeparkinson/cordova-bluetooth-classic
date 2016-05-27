@@ -4,13 +4,14 @@
 @interface BluetoothClassicPlugin(){
   uint8_t*   rxBuffer;
   uint32_t  rxBytes;
+  bool connected;
 }
 
 @property (nonatomic, strong) EAAccessory*          myAccessory;
 @property (nonatomic, strong) EASession*            dataSession;
 @property (nonatomic, strong) NSMutableData*        readData;
-@property (nonatomic, strong) NSMutableDictionary*  connectCallbacks;
-@property (nonatomic, strong) NSMutableDictionary*  disconnectCallbacks;
+@property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
+@property (nonatomic, strong) NSTimer*              timer;
 
 @end
 
@@ -18,7 +19,11 @@
 - (void)pluginInitialize {
   NSLog(@"Cordova Bluetooth Classic Plugin");
   NSLog(@"(c)2016 Sam Musso");
+
+  connected = YES;
   rxBuffer = (uint8_t*) malloc(1024 * 25);
+
+
   [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(accessoryNotification:)
@@ -28,20 +33,21 @@
   [super pluginInitialize];
 }
 
-- (void)onAppTerminate
-{
+- (void)onAppTerminate{
     free(rxBuffer);
     _dataSession = nil;
     _readData = nil;
+    _connected = NO;
 }
 
 - (void)connect: (CDVInvokedUrlCommand*)command {
-  CDVPluginResult *pluginResult = nil;
+  _timer = [NSTimer scheduledTimerWithTimeInterval: 30
+                      target: self
+                      selector:@selector(onTick:)
+                      userInfo: nil repeats:NO];
 
+  connectCallback = command;
   [self connectToAccessory];
-
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)write: (CDVInvokedUrlCommand*)command {
@@ -118,6 +124,9 @@
         [self connectToAccessory];
     // if accessory has disconnected, tell user and release data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
+      CDVPluginResult *pluginResult = nil;
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
         [self setConnectionStatus:NO];
     }
 }
@@ -148,6 +157,10 @@
           [[_dataSession inputStream] open];
 
           [self setConnectionStatus:YES];
+
+          CDVPluginResult *pluginResult = nil;
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
       }else{
           [self setConnectionStatus:NO];
       }
@@ -158,10 +171,14 @@
 }
 
 - (void)setConnectionStatus:(BOOL)connected{
-  if(connected){
-   // Report connection to plugin
-  }else{
-   // Report disconnection to plugin
+  _connected = connected;
+}
+
+- (void)onTick:(NSTimer*)t{
+  if(_connected == NO){
+    CDVPluginResult *pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
   }
 }
 
