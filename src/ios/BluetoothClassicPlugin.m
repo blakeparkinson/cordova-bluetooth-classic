@@ -37,7 +37,7 @@
     free(rxBuffer);
     _dataSession = nil;
     _readData = nil;
-    _connected = NO;
+    connected = NO;
 }
 
 - (void)connect: (CDVInvokedUrlCommand*)command {
@@ -46,7 +46,7 @@
                       selector:@selector(onTick:)
                       userInfo: nil repeats:NO];
 
-  connectCallback = command;
+  _connectCallback = command;
   [self connectToAccessory];
 }
 
@@ -126,7 +126,7 @@
     if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
       CDVPluginResult *pluginResult = nil;
       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
         [self setConnectionStatus:NO];
     }
 }
@@ -160,7 +160,7 @@
 
           CDVPluginResult *pluginResult = nil;
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-          [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
       }else{
           [self setConnectionStatus:NO];
       }
@@ -171,14 +171,14 @@
 }
 
 - (void)setConnectionStatus:(BOOL)connected{
-  _connected = connected;
+  connected = connected;
 }
 
 - (void)onTick:(NSTimer*)t{
-  if(_connected == NO){
+  if(connected == NO){
     CDVPluginResult *pluginResult = nil;
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
   }
 }
 
