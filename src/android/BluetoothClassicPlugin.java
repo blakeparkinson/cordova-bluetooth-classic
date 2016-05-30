@@ -35,6 +35,8 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final String WRITE = "write";
     private static final String READ = "read";
     private static final String DISCONNECT = "disconnect";
+    private static final String IS_CONNECTED = "isConnected";
+
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -93,6 +95,15 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       else if (action.equals(DISCONNECT)){
         disconnect(callbackContext);
       }
+      else if (action.equals(IS_CONNECTED)) {
+
+            if (mState == STATE_CONNECTED) {
+                callbackContext.success();
+            } else {
+                callbackContext.error("Not connected.");
+            }
+
+        }
       else{
         validAction = false;
       }
