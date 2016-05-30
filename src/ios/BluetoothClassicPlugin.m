@@ -10,6 +10,7 @@
 @property (nonatomic, strong) EAAccessory*          myAccessory;
 @property (nonatomic, strong) EASession*            dataSession;
 @property (nonatomic, strong) NSMutableData*        readData;
+@property (nonatomic, strong) NSMutableArray*       accessoriesList;
 @property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
 @property (nonatomic, strong) NSTimer*              timer;
 
@@ -180,6 +181,22 @@
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
   }
+}
+
+//return connection status
+- (void)isConnected:(CDVInvokedUrlCommand*)command{
+
+    _accessoriesList = [[NSMutableArray alloc] initWithArray:[[EAAccessoryManager sharedAccessoryManager] connectedAccessories]];
+    CDVPluginResult *pluginResult = nil;
+
+    if(_accessoriesList >0 && _dataSession){
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }else{
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
