@@ -27,5 +27,8 @@ module.exports = {
 
   disconnect: function(success, failure){
     cordova.exec(success, failure, "BluetoothClassicPlugin", "disconnect", []);
+  },
+  isConnected: function (success, failure) {
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "isConnected", []);
   }
 };
