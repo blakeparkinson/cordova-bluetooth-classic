@@ -54,11 +54,9 @@
 //return connection status
 - (void)isConnected:(CDVInvokedUrlCommand*)command{
 
-    _accessoriesList = [[NSMutableArray alloc] initWithArray:[[EAAccessoryManager sharedAccessoryManager] connectedAccessories]];
     CDVPluginResult *pluginResult = nil;
-    NSUInteger elements = [_accessoriesList count];
 
-    if(elements > 0 && _dataSession){
+    if(connected){
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }else{
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
@@ -181,6 +179,9 @@
           [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
       }else{
           [self setConnectionStatus:NO];
+          CDVPluginResult *pluginResult = nil;
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
       }
   }else{
     [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
