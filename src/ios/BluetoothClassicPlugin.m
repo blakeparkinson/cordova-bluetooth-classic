@@ -24,7 +24,11 @@
 
 }
 
-@property (nonatomic, strong) NSMutableDictionary* connectionDictionary;
+@property (nonatomic, strong) EAAccessory*          btAccessory;
+@property (nonatomic, strong) EASession*            btSession;
+@property (nonatomic, strong) NSMutableData*        btBuffer;
+@property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
+@property (nonatomic, strong) NSTimer*              connectTimer;
 
 @end
 
@@ -36,6 +40,8 @@
     uint32_t  rxBytes;
     bool connected;
 }
+
+@property (nonatomic, strong) NSMutableDictionary* connectionDictionary;
 
 @property (nonatomic, strong) EAAccessory*          myAccessory;
 @property (nonatomic, strong) EASession*            dataSession;
@@ -185,6 +191,8 @@
     }
     // create data session if we found a matching accessory
     if (accessory){
+
+      NSLog(@"Device serial number: %@", accessory.serialNumber);
         _myAccessory = accessory;
         _dataSession = [[EASession alloc] initWithAccessory:accessory
                                                 forProtocol:protocolString];
