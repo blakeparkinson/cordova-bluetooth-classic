@@ -43,5 +43,9 @@
         <framework src="ExternalAccessory.framework" weak="true" />
         <header-file src="src/ios/BluetoothClassicPlugin.h"/>
         <source-file src="src/ios/BluetoothClassicPlugin.m"/>
+        <header-file src="src/ios/ConnectionData.h"/>
+        <source-file src="src/ios/ConnectionData.m"/>
+        <header-file src="src/ios/StreamDelegate.h"/>
+        <source-file src="src/ios/StreamDelegate.m"/>
     </platform>
 </plugin>

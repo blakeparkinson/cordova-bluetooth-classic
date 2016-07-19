@@ -1,53 +1,9 @@
 #import "BluetoothClassicPlugin.h"
 #import <Cordova/CDV.h>
 
-@interface StreamDelegate: NSStream <NSStreamDelegate>{
-}
-
-@property (nonatomic, strong) NSMutableDictionary* globalDictionary;
-@property (nonatomic, strong) NSString*            myKey;
-
-- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode;
-
-@end
-
-@implementation StreamDelegate
-- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode {
-    // Look through the dictionary for your key
-    // This is all of the connection info you need
-    // Grab the inputStream from the session in the ConnectionData
-    // Read the bytes from it and put it in the buffer in the ConnectionData
-}
-@end
-
-@interface ConnectionData : NSObject{
-
-}
-
-@property (nonatomic, strong) EAAccessory*          btAccessory;
-@property (nonatomic, strong) EASession*            btSession;
-@property (nonatomic, strong) NSMutableData*        btBuffer;
-@property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
-@property (nonatomic, strong) NSTimer*              connectTimer;
-
-@end
-
-@implementation ConnectionData
-@end
-
 @interface BluetoothClassicPlugin(){
-    uint8_t*   rxBuffer;
-    uint32_t  rxBytes;
     bool connected;
 }
-
-@property (nonatomic, strong) NSMutableDictionary* connectionDictionary;
-
-@property (nonatomic, strong) EAAccessory*          myAccessory;
-@property (nonatomic, strong) EASession*            dataSession;
-@property (nonatomic, strong) NSMutableData*        readData;
-@property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
-@property (nonatomic, strong) NSTimer*              timer;
 
 @end
 
@@ -57,8 +13,6 @@
     NSLog(@"(c)2016 Sam Musso");
 
     connected = NO;
-    rxBuffer = (uint8_t*) malloc(1024 * 25);
-
 
     [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -66,13 +20,12 @@
                                                  name:nil
                                                object:[EAAccessoryManager sharedAccessoryManager]];
 
+    _activeConnections = [[NSMutableArray alloc] init];
+
     [super pluginInitialize];
 }
 
 - (void)onAppTerminate{
-    free(rxBuffer);
-    _dataSession = nil;
-    _readData = nil;
     connected = NO;
 }
 
@@ -136,36 +89,10 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)readReceivedData{
-
-    NSInteger bytesRead = [[_dataSession inputStream] read:rxBuffer maxLength:(1024)];
-
-    if(_readData == nil){
-        _readData = [[NSMutableData alloc] init];
-    }
-
-    [_readData appendBytes:(void *)rxBuffer length:bytesRead];
-    uint8_t *s = (uint8_t*)self.readData.bytes;
-
-    NSString *debugString = [[NSString alloc] init];
-
-    NSLog(@"Buffered in %zd bytes", bytesRead);
-}
-
-- (void)stream:(NSStream*)theStream handleEvent:(NSStreamEvent)streamEvent{
-    switch(streamEvent){
-        case NSStreamEventHasBytesAvailable:
-            [self readReceivedData];
-            break;
-        default:
-            break;
-    }
-}
-
 - (void)accessoryNotification:(NSNotification *)notification{
     // if accessory has connected try to open data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidConnectNotification"])
-        [self connectToAccessory];
+        [self connectToAccessoryMulti];
     // if accessory has disconnected, tell user and release data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
         CDVPluginResult *pluginResult = nil;
@@ -175,8 +102,17 @@
     }
 }
 
-- (void)connectToAccessory{
+- (BOOL)isNewAccessory:(EAAccessory *)btAcc{
+    BOOL isNew = YES;
+    for (EAAccessory *obj in _activeConnections){
+        if(obj == btAcc){
+            isNew = NO;
+        }
+    }
+    return isNew;
+}
 
+- (void)connectToAccessoryMulti{
     NSArray *accessories = [[EAAccessoryManager sharedAccessoryManager]
                             connectedAccessories];
     NSString *protocolString = @"com.alpinelabs.pulse";
@@ -185,35 +121,43 @@
     // search for accessory supporting our protocol
     for (EAAccessory *obj in accessories){
         if ([[obj protocolStrings] containsObject:protocolString]){
-            accessory = obj;
+            // Need to make sure we have not already connected to this accessory
+            if([self isNewAccessory:obj])
+                accessory = obj;
             break;
         }
     }
-    // create data session if we found a matching accessory
-    if (accessory){
 
-      NSLog(@"Device serial number: %@", accessory.serialNumber);
-        _myAccessory = accessory;
-        _dataSession = [[EASession alloc] initWithAccessory:accessory
-                                                forProtocol:protocolString];
-        if (_dataSession){
-            [[_dataSession inputStream] setDelegate:self];
-            [[_dataSession inputStream] scheduleInRunLoop:[NSRunLoop currentRunLoop]
-                                                  forMode:NSDefaultRunLoopMode];
-            [[_dataSession inputStream] open];
+    if(accessory){ // This is a new accessory i.e. not in the dictionary
+        NSLog(@"New accessory found. Serial number: %@", accessory.serialNumber);
+        ConnectionData *cd = [[ConnectionData alloc] init];
+        cd.btAccessory = accessory;
+        cd.btStreamHandler = [[StreamDelegate alloc] init];
+        cd.btStreamHandler.parent = cd;
+        cd.btSession = [[EASession alloc] initWithAccessory:cd.btAccessory forProtocol:protocolString];
 
-            [self setConnectionStatus:YES];
+        if(cd.btSession){
+            [[cd.btSession inputStream] setDelegate:cd.btStreamHandler];
+            [[cd.btSession inputStream] scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            [[cd.btSession inputStream] open];
+
+            cd.btBuffer = [[NSMutableData alloc] init];
+
+            [_activeConnections addObject:cd];
+
+            NSLog(@"Accessory %@ added to active connections list.", accessory.serialNumber);
 
             CDVPluginResult *pluginResult = nil;
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
-        }else{
-            [self setConnectionStatus:NO];
-            CDVPluginResult *pluginResult = nil;
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
+
+            return;
         }
     }
+
+    CDVPluginResult *pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
 }
 
 - (void)initialConnectToAccessory{
@@ -231,7 +175,7 @@
     }
 
     if (accessory){
-        [self connectToAccessory];
+        [self connectToAccessoryMulti];
     }else {
         [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
         [self setConnectionStatus:NO];
