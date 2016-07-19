@@ -95,10 +95,16 @@
         [self connectToAccessoryMulti];
     // if accessory has disconnected, tell user and release data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
-        CDVPluginResult *pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
-        [self setConnectionStatus:NO];
+        EAAccessory* accessory = [notification.userInfo objectForKey:EAAccessoryKey];
+        for(ConnectionData* cd in _activeConnections){
+            if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]){
+                [_activeConnections removeObject:cd];
+                NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
+            }
+        }
+        // CDVPluginResult *pluginResult = nil;
+        // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
     }
 }
 
@@ -122,9 +128,11 @@
     for (EAAccessory *obj in accessories){
         if ([[obj protocolStrings] containsObject:protocolString]){
             // Need to make sure we have not already connected to this accessory
-            if([self isNewAccessory:obj])
+            if([self isNewAccessory:obj]){
+                // Need to do more checking to see if this is a valid serial number
                 accessory = obj;
-            break;
+                break;
+            }
         }
     }
 
@@ -147,9 +155,10 @@
 
             NSLog(@"Accessory %@ added to active connections list.", accessory.serialNumber);
 
-            CDVPluginResult *pluginResult = nil;
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
+            // Need to grab the correct callback from the dictionary
+            // CDVPluginResult *pluginResult = nil;
+            // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
 
             return;
         }
