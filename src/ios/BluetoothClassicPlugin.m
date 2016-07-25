@@ -22,15 +22,15 @@
   NSLog(@"Cordova Bluetooth Classic Plugin");
   NSLog(@"(c)2016 Sam Musso");
 
-  connected = YES;
-  rxBuffer = (uint8_t*) malloc(1024 * 25);
-
+  connected = NO;
 
   [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(accessoryNotification:)
                                                name:nil
                                              object:[EAAccessoryManager sharedAccessoryManager]];
+
+  _activeConnections = [[NSMutableArray alloc] init];
 
   [super pluginInitialize];
 }
@@ -98,6 +98,10 @@
   CDVPluginResult *pluginResult = nil;
 
   NSString* mac = [command.arguments objectAtIndex:0];
+
+  for (ConnectionData *obj in _activeConnections){
+      
+  }
 
   if(_readData != nil){
     NSData *data = [NSData dataWithData:_readData];
@@ -170,14 +174,76 @@
 - (void)accessoryNotification:(NSNotification *)notification{
     // if accessory has connected try to open data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidConnectNotification"])
-        [self connectToAccessory];
+        [self connectToAccessoryMulti];
     // if accessory has disconnected, tell user and release data session
     if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
-      CDVPluginResult *pluginResult = nil;
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
-        [self setConnectionStatus:NO];
+        EAAccessory* accessory = [notification.userInfo objectForKey:EAAccessoryKey];
+        for(ConnectionData* cd in _activeConnections){
+            if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]){
+                [_activeConnections removeObject:cd];
+                NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
+            }
+        }
+        // CDVPluginResult *pluginResult = nil;
+        // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
     }
+}
+
+
+- (void)connectToAccessoryMulti{
+    NSArray *accessories = [[EAAccessoryManager sharedAccessoryManager]
+                            connectedAccessories];
+    NSString *protocolString = @"com.alpinelabs.pulse";
+    EAAccessory *accessory = nil;
+
+    // search for accessory supporting our protocol
+    for (EAAccessory *obj in accessories){
+        if ([[obj protocolStrings] containsObject:protocolString]){
+            // Need to make sure we have not already connected to this accessory
+            if([self isNewAccessory:obj]){
+                // Need to do more checking to see if this is a valid serial number
+                accessory = obj;
+                break;
+            }
+        }
+    }
+
+    if(accessory){ // This is a new accessory i.e. not in the dictionary
+        NSLog(@"New accessory found. Serial number: %@", accessory.serialNumber);
+        NSString *macAddress = [ self serialToMAC:accessory.serialNumber ];
+
+        NSLog(@"MAC from serial is: %@", macAddress);
+
+        ConnectionData *cd = [[ConnectionData alloc] init];
+        cd.btAccessory = accessory;
+        cd.btStreamHandler = [[StreamDelegate alloc] init];
+        cd.btStreamHandler.parent = cd;
+        cd.btSession = [[EASession alloc] initWithAccessory:cd.btAccessory forProtocol:protocolString];
+
+        if(cd.btSession){
+            [[cd.btSession inputStream] setDelegate:cd.btStreamHandler];
+            [[cd.btSession inputStream] scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            [[cd.btSession inputStream] open];
+
+            cd.btBuffer = [[NSMutableData alloc] init];
+
+            [_activeConnections addObject:cd];
+
+            NSLog(@"Accessory %@ added to active connections list.", accessory.serialNumber);
+
+            // Need to grab the correct callback from the dictionary
+            // CDVPluginResult *pluginResult = nil;
+            // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
+
+            return;
+        }
+    }
+
+    CDVPluginResult *pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
 }
 
 - (void)connectToAccessory{
