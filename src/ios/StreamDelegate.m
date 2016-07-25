@@ -5,6 +5,11 @@
 - (void)bufferRXData{
     // Grab the inputStream from the session in the ConnectionData
     // Read the bytes from it and put it in the buffer in the ConnectionData
+
+    if(_parent.btBuffer == nil){
+      _parent.btBuffer = [[NSMutableData alloc] init];
+    }
+    
     NSInteger bytesRead = [[_parent.btSession inputStream] read:rxBuffer maxLength:(2048)];
     [_parent.btBuffer appendBytes:(void *)rxBuffer length:bytesRead];
 

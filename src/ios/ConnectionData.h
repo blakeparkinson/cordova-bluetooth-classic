@@ -7,9 +7,10 @@
 #import <Cordova/CDV.h>
 
 @interface ConnectionData : NSObject{
-    
+
 }
 
+@property (nonatomic, strong) NSString*             btMAC;
 @property (nonatomic, strong) EAAccessory*          btAccessory;
 @property (nonatomic, strong) EASession*            btSession;
 @property (nonatomic, strong) NSMutableData*        btBuffer;
