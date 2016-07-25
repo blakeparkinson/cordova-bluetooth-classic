@@ -97,6 +97,8 @@
 - (void)read: (CDVInvokedUrlCommand*)command {
   CDVPluginResult *pluginResult = nil;
 
+  NSString* mac = [command.arguments objectAtIndex:0];
+
   if(_readData != nil){
     NSData *data = [NSData dataWithData:_readData];
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];

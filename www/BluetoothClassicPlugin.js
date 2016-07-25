@@ -21,8 +21,9 @@ module.exports = {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "write", [data]);
   },
 
-  read: function(success, failure) {
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "read", []);
+  read: function(id, success, failure) {
+    console.log('Reading data from device: '+id);
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "read", [id]);
   },
 
   disconnect: function(success, failure){
