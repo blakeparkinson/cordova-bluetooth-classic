@@ -29,6 +29,24 @@
     connected = NO;
 }
 
+- (NSString *)serialToMAC:(NSString *)serial{
+    NSMutableString *MAC = [NSMutableString stringWithString:@"00:02:"];
+    NSMutableString *reversedSerial = [NSMutableString stringWithCapacity:[serial length]];
+
+    [serial enumerateSubstringsInRange:NSMakeRange(0,[serial length])
+                               options:(NSStringEnumerationReverse | NSStringEnumerationByComposedCharacterSequences)
+                            usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+                                [reversedSerial appendString:substring];
+                            }];
+
+    [MAC appendString:reversedSerial];
+    [MAC insertString: @":" atIndex:8];
+    [MAC insertString: @":" atIndex:11];
+    [MAC insertString: @":" atIndex:14];
+
+    return (NSString *)[MAC copy];
+}
+
 - (void)connect: (CDVInvokedUrlCommand*)command {
     _timer = [NSTimer scheduledTimerWithTimeInterval: 30
                                               target: self
@@ -138,6 +156,10 @@
 
     if(accessory){ // This is a new accessory i.e. not in the dictionary
         NSLog(@"New accessory found. Serial number: %@", accessory.serialNumber);
+        NSString *macAddress = [ self serialToMAC:accessory.serialNumber ];
+
+        NSLog(@"MAC from serial is: %@", macAddress);
+
         ConnectionData *cd = [[ConnectionData alloc] init];
         cd.btAccessory = accessory;
         cd.btStreamHandler = [[StreamDelegate alloc] init];
