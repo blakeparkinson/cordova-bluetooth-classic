@@ -61,16 +61,13 @@
 }
 
 - (void)connect: (CDVInvokedUrlCommand*)command {
-  if(_dataSession){
-        [self closeSession:nil];
-    }
-    _concatString = [[NSMutableString alloc] init];
-      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryConnected:) name:EAAccessoryDidConnectNotification object:nil];
-      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryDisconnected:) name:EAAccessoryDidDisconnectNotification object:nil];
+
+      // [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryConnected:) name:EAAccessoryDidConnectNotification object:nil];
+      // [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryDisconnected:) name:EAAccessoryDidDisconnectNotification object:nil];
       [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
 
   _connectCallback = command;
-  [self connectToAccessory];
+  [self connectToAccessoryMulti];
 }
 
 //return connection status
@@ -179,8 +176,10 @@
 
         ConnectionData *cd = [[ConnectionData alloc] init];
         cd.btAccessory = accessory;
+
         cd.btStreamHandler = [[StreamDelegate alloc] init];
         cd.btStreamHandler.parent = cd;
+
         cd.btSession = [[EASession alloc] initWithAccessory:cd.btAccessory forProtocol:protocolString];
 
         if(cd.btSession){
