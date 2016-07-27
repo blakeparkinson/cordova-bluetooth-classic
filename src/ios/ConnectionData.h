@@ -7,7 +7,7 @@
 #import <Cordova/CDV.h>
 
 @interface ConnectionData : NSObject{
-
+    
 }
 
 @property (nonatomic, strong) NSString*             btMAC;
@@ -18,6 +18,8 @@
 
 @property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
 @property (nonatomic, strong) NSTimer*              connectTimer;
+
+- (void)onTick:(NSTimer*)t;
 
 @end
 

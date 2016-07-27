@@ -2,44 +2,46 @@
 #import <Cordova/CDV.h>
 
 @interface BluetoothClassicPlugin(){
-  uint8_t*   rxBuffer;
-  uint32_t  rxBytes;
-  bool connected;
+    uint8_t*   rxBuffer;
+    uint32_t  rxBytes;
+    bool connected;
 }
 
-@property (nonatomic, strong) EAAccessory*          myAccessory;
-@property (nonatomic, strong) EASession*            dataSession;
-@property (nonatomic, strong) NSMutableData*        readData;
-@property (nonatomic, strong) NSMutableArray*       accessoriesList;
 @property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
-@property (nonatomic, strong) NSTimer*              timer;
-@property (nonatomic, strong) NSMutableString       *concatString;
 
 @end
 
 @implementation BluetoothClassicPlugin
 - (void)pluginInitialize {
-  NSLog(@"Cordova Bluetooth Classic Plugin");
-  NSLog(@"(c)2016 Sam Musso");
+    NSLog(@"Cordova Bluetooth Classic Plugin");
+    NSLog(@"(c)2016 Sam Musso");
 
-  connected = NO;
+    connected = NO;
 
-  [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(accessoryNotification:)
-                                               name:nil
-                                             object:[EAAccessoryManager sharedAccessoryManager]];
+    [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accessoryNotification:)
+                                                 name:nil
+                                               object:[EAAccessoryManager sharedAccessoryManager]];
 
-  _activeConnections = [[NSMutableArray alloc] init];
+    _activeConnections = [[NSMutableArray alloc] init];
+    _callbackDictionary = [[NSMutableDictionary alloc] init];
 
-  [super pluginInitialize];
+    [super pluginInitialize];
 }
 
 - (void)onAppTerminate{
     free(rxBuffer);
-    _dataSession = nil;
-    _readData = nil;
-    connected = NO;
+}
+
+- (BOOL)isNewAccessory:(EAAccessory *)btAcc{
+    BOOL isNew = YES;
+    for (ConnectionData *obj in _activeConnections){
+        if(obj.btAccessory == btAcc){
+            isNew = NO;
+        }
+    }
+    return isNew;
 }
 
 - (NSString *)serialToMAC:(NSString *)serial{
@@ -61,13 +63,10 @@
 }
 
 - (void)connect: (CDVInvokedUrlCommand*)command {
+    [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
 
-      // [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryConnected:) name:EAAccessoryDidConnectNotification object:nil];
-      // [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(accessoryDisconnected:) name:EAAccessoryDidDisconnectNotification object:nil];
-      [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
-
-  _connectCallback = command;
-  [self connectToAccessoryMulti];
+    [_callbackDictionary setObject:command forKey:[command.arguments objectAtIndex:0] ];
+    [self connectToAccessoryMulti];
 }
 
 //return connection status
@@ -86,48 +85,47 @@
 }
 
 - (void)write: (CDVInvokedUrlCommand*)command {
-  CDVPluginResult *pluginResult = nil;
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    CDVPluginResult *pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)read: (CDVInvokedUrlCommand*)command {
-  CDVPluginResult *pluginResult = nil;
+    CDVPluginResult *pluginResult = nil;
 
-  NSString* mac = [command.arguments objectAtIndex:0];
+    NSString* mac = [command.arguments objectAtIndex:0];
 
-  for (ConnectionData *cd in _activeConnections){
-    if([cd.btAccessory isEqualToString:mac]){
-      if(cd.btBuffer != nil){
-        NSData *data = [NSData dataWithData:cd.btBuffer];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-      }else{
-        // There is no data, handle it
-      }
+    for (ConnectionData *cd in _activeConnections){
+        if([cd.btMAC isEqualToString:mac]){
+            if(cd.btBuffer != nil){
+                NSData *data = [NSData dataWithData:cd.btBuffer];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }else{
+                // There is no data, handle it
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
 
-      cd.btBuffer = nil;
-      return;
+            cd.btBuffer = nil;
+            return;
+        }
     }
-  }
 
-  // If we get down here then we didn't find the device
-
+    // If we get down here then we didn't find the device
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)disconnect: (CDVInvokedUrlCommand*)command {
-  CDVPluginResult *pluginResult = nil;
+    CDVPluginResult *pluginResult = nil;
 
-  [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-  [[_dataSession inputStream] setDelegate:nil];
-  [[_dataSession inputStream] close];
+    // [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    // [[_dataSession inputStream] setDelegate:nil];
+    // [[_dataSession inputStream] close];
 
- // _myAccessory = nil;
-  _dataSession = nil;
- // _readData = nil;
-
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)accessoryNotification:(NSNotification *)notification{
@@ -141,11 +139,11 @@
             if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]){
                 [_activeConnections removeObject:cd];
                 NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
+                CDVPluginResult *pluginResult = nil;
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:cd.connectCallback.callbackId];
             }
         }
-        // CDVPluginResult *pluginResult = nil;
-        // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
     }
 }
 
@@ -170,11 +168,12 @@
 
     if(accessory){ // This is a new accessory i.e. not in the dictionary
         NSLog(@"New accessory found. Serial number: %@", accessory.serialNumber);
-        NSString *macAddress = [ self serialToMAC:accessory.serialNumber ];
 
+        NSString *macAddress = [ self serialToMAC:accessory.serialNumber ];
         NSLog(@"MAC from serial is: %@", macAddress);
 
         ConnectionData *cd = [[ConnectionData alloc] init];
+        cd.btMAC = macAddress;
         cd.btAccessory = accessory;
 
         cd.btStreamHandler = [[StreamDelegate alloc] init];
@@ -194,58 +193,32 @@
             NSLog(@"Accessory %@ added to active connections list.", accessory.serialNumber);
 
             // Need to grab the correct callback from the dictionary
-            // CDVPluginResult *pluginResult = nil;
-            // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            // [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
+            cd.connectCallback = [_callbackDictionary objectForKey:cd.btMAC];
+
+            CDVPluginResult *pluginResult = nil;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:cd.connectCallback.callbackId];
 
             return;
         }
     }
-
-    CDVPluginResult *pluginResult = nil;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
 }
 
 - (void)setConnectionStatus:(BOOL)connected{
-  connected = connected;
 }
 
-- (void)onTick:(NSTimer*)t{
-  if(connected == NO){
-    CDVPluginResult *pluginResult = nil;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
-  }
-}
 
 // close the session with the accessory.
 - (void)closeSession:(CDVInvokedUrlCommand *)command{
 
-    [[_dataSession inputStream] close];
-    [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [[_dataSession inputStream] setDelegate:nil];
-    [[_dataSession outputStream] close];
-    [[_dataSession outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [[_dataSession outputStream] setDelegate:nil];
-
-    _dataSession = nil;
+    // [[_dataSession inputStream] close];
+    // [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    // [[_dataSession inputStream] setDelegate:nil];
+    // [[_dataSession outputStream] close];
+    // [[_dataSession outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    // [[_dataSession outputStream] setDelegate:nil];
+    //
+    // _dataSession = nil;
 }
-
-- (void)accessoryConnected:(NSNotification *)notification
-{
-
-    NSLog(@"EAController::accessoryConnected");
-    //return data string from Connected device.
-
-    if(!_dataSession){
-    }
-}
-
-- (void)accessoryDisconnected:(NSNotification *)notification{
-    NSLog(@"accessory disconnected");
-    [self closeSession:nil];
-}
-
 
 @end

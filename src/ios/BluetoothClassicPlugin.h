@@ -13,12 +13,7 @@
 - (void)read: (CDVInvokedUrlCommand*)command;
 
 @property (nonatomic, strong) NSMutableArray*       activeConnections;
-
-@property (nonatomic, strong) EAAccessory*          myAccessory;
-@property (nonatomic, strong) EASession*            dataSession;
-@property (nonatomic, strong) NSMutableData*        readData;
-@property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
-@property (nonatomic, strong) NSTimer*              timer;
+@property (nonatomic, strong) NSMutableArray*       callbackDictionary;
 
 @end
 
