@@ -18,13 +18,17 @@ public class ConnectionData {
   public CallbackContext  mConnectCallback;
   public CallbackContext  mDisconnectCallback;
 
+  public String macAddress;
+
+  public int mState;
+
   private static final int STATE_DISCONNECTED = 0;
   private static final int STATE_CONNECTING = 1;
   private static final int STATE_CONNECTED = 2;
   private static final int STATE_TEST = 3;
 
   public ConnectionData(){
-
+    mState = STATE_CONNECTING;
   }
 
   public int getState(){
