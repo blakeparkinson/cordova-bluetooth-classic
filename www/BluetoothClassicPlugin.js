@@ -7,7 +7,11 @@ module.exports = {
     cordova.exec(success, failure, 'BluetoothClassicPlugin', 'connect', [id]);
   },
 
-  write: function(data, success, failure) {
+
+  // This is unsuported as we do not use this anywhere.
+  // all the wiring is setup to make implementation quick
+  // if and when it is needed
+  write: function(data, id, success, failure) {
     // convert to ArrayBuffer
     if (typeof data === 'string') {
       data = stringToArrayBuffer(data);
@@ -18,7 +22,7 @@ module.exports = {
       data = data.buffer;
     }
 
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "write", [data]);
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "write", [id, data]);
   },
 
   read: function(id, success, failure) {
@@ -26,9 +30,12 @@ module.exports = {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "read", [id]);
   },
 
+  // Disconnect does not really work as intended on iOS due to the way GC is handled
+  // Its more of a polite 'I am done with this, thanks' than a closure of the phy
   disconnect: function(success, failure){
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "disconnect", []);
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "disconnect", [id]);
   },
+
   isConnected: function (success, failure) {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "isConnected", []);
   }
