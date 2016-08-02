@@ -87,37 +87,67 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private void write(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       String macAddress = args.getString(0);
 
-      if (mOutputStream == null) {
+      ConnectionData theConnection = getConnection(macAddress);
+
+      // check to make sure theConnection is not null
+      if(theConnection == null){
+        String message = "failed to locate the bluetooth device.";
+        JSONObject json = new JSONObject();
+        try{
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          return;
+        }catch (JSONException e) {
+            e.printStackTrace();
             return;
         }
-        try {
-            mOutputStream.write(out);
-            String message = "successfully wrote to connected bluetooth device.";
-            JSONObject json = new JSONObject();
-            json.put("message", message);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
-        } catch (IOException e) {
+      }
+
+      if (theConnection.mOutputStream == null) {
+        String message = "Bluetooth device has an invalid output stream.";
+        JSONObject json = new JSONObject();
+        try{
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          return;
+        }catch (JSONException e) {
             e.printStackTrace();
-
-            closeSocket();
-            mState = STATE_DISCONNECTED;
-              String message = "failed to connect to write to connected bluetooth device.";
-              JSONObject json = new JSONObject();
-              try{
-                json.put("message", message);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
-              }
-
-            catch(JSONException err2){
-              err2.printStackTrace();
-            }
+            return;
         }
+      }
+
+      try {
+          theConnection.mOutputStream.write(out);
+          String message = "successfully wrote to connected bluetooth device.";
+          JSONObject json = new JSONObject();
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+          return;
+      } catch (IOException e) {
+          e.printStackTrace();
+
+          theConnection.mState = STATE_DISCONNECTED;
+          String message = "failed to connect to write to connected bluetooth device.";
+          JSONObject json = new JSONObject();
+          try{
+            json.put("message", message);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            return;
+          }catch(JSONException err2){
+            err2.printStackTrace();
+          }
+      }
     }
 
     private void disconnect(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       String macAddress = args.getString(0);
 
       ConnectionData theConnection = getConnection(macAddress);
+
+      // check to make sure theConnection is not null
+      if(theConnection == null){
+
+      }
 
       cmdDisconnect(theConnection);
 
@@ -211,11 +241,10 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     }
 
     private void cmdDisconnect(ConnectionData theConnection) {
-        if (mState != STATE_DISCONNECTED) {
-            try {mOutputStream.close();} catch (Exception e) {}
-            try {mInputStream.close();} catch (Exception e) {}
-            closeSocket();
-            mState = STATE_DISCONNECTED;
+        if (theConnection.mState != STATE_DISCONNECTED) {
+            try {theConnection.mOutputStream.close();} catch (Exception e) {}
+            try {theConnection.mInputStream.close();} catch (Exception e) {}
+            theConnection.mState = STATE_DISCONNECTED;
         }
     }
 
