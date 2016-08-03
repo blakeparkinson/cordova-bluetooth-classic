@@ -22,7 +22,7 @@ public class ConnectionData {
   public State mState;
 
   public ConnectionData(){
-    mState = STATE_CONNECTING;
+    mState = State.STATE_CONNECTING;
   }
 
 }

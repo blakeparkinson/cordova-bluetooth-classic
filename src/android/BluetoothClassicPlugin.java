@@ -130,7 +130,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
           return;
-      } catch (IOException e) {
+      } catch (JSONException e) {
           e.printStackTrace();
 
           theConnection.mState = State.STATE_DISCONNECTED;

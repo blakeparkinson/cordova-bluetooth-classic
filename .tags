@@ -18,16 +18,6 @@ connectCallback	/Users/macmin/Documents/cordova-bluetooth-classic/src/ios/Connec
 connectTimer	/Users/macmin/Documents/cordova-bluetooth-classic/src/ios/ConnectionData.h	/^@property (nonatomic, strong) NSTimer*              connectTimer;$/;"	variable	line:20
 StreamDelegate_h	/Users/macmin/Documents/cordova-bluetooth-classic/src/ios/StreamDelegate.h	/^#define StreamDelegate_h$/;"	macro	line:2
 parent	/Users/macmin/Documents/cordova-bluetooth-classic/src/ios/StreamDelegate.h	/^@property (nonatomic, strong) ConnectionData* parent;$/;"	variable	line:11
-BTCPlugin	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^package BTCPlugin;$/;"	package	line:1
-ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^public class ConnectionData {$/;"	class	line:11
-mDevice	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothDevice  mDevice;$/;"	field	line:13	class:ConnectionData
-mSocket	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothSocket  mSocket;$/;"	field	line:14	class:ConnectionData
-mInputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public InputStream      mInputStream;$/;"	field	line:15	class:ConnectionData
-mOutputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public OutputStream     mOutputStream;$/;"	field	line:16	class:ConnectionData
-mConnectCallback	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public CallbackContext  mConnectCallback;$/;"	field	line:18	class:ConnectionData
-macAddress	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public String macAddress;$/;"	field	line:20	class:ConnectionData
-mState	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public State mState;$/;"	field	line:22	class:ConnectionData
-ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public ConnectionData(){$/;"	method	line:24	class:ConnectionData	signature:()
 BTCPlugin	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/State.java	/^package BTCPlugin;$/;"	package	line:1
 State	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/State.java	/^public enum State {$/;"	enum	line:3
 STATE_DISCONNECTED	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/State.java	/^  STATE_DISCONNECTED,$/;"	enum constant	line:4	enum:State	file:
@@ -55,3 +45,13 @@ connect	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/BluetoothC
 cmdDisconnect	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/BluetoothClassicPlugin.java	/^    private void cmdDisconnect(ConnectionData theConnection) {$/;"	method	line:250	class:BluetoothClassicPlugin	file:	signature:(ConnectionData theConnection)
 read	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/BluetoothClassicPlugin.java	/^    private void read(CordovaArgs args, CallbackContext callbackContext) throws JSONException {$/;"	method	line:258	class:BluetoothClassicPlugin	file:	signature:(CordovaArgs args, CallbackContext callbackContext)
 getConnection	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/BluetoothClassicPlugin.java	/^    private ConnectionData getConnection(String address){$/;"	method	line:298	class:BluetoothClassicPlugin	file:	signature:(String address)
+BTCPlugin	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^package BTCPlugin;$/;"	package	line:1
+ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^public class ConnectionData {$/;"	class	line:11
+mDevice	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothDevice  mDevice;$/;"	field	line:13	class:ConnectionData
+mSocket	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothSocket  mSocket;$/;"	field	line:14	class:ConnectionData
+mInputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public InputStream      mInputStream;$/;"	field	line:15	class:ConnectionData
+mOutputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public OutputStream     mOutputStream;$/;"	field	line:16	class:ConnectionData
+mConnectCallback	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public CallbackContext  mConnectCallback;$/;"	field	line:18	class:ConnectionData
+macAddress	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public String macAddress;$/;"	field	line:20	class:ConnectionData
+mState	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public State mState;$/;"	field	line:22	class:ConnectionData
+ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public ConnectionData(){$/;"	method	line:24	class:ConnectionData	signature:()
