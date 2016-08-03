@@ -33,7 +33,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     private static final String DISCONNECT = "disconnect";
     private static final String IS_CONNECTED = "isConnected";
 
-    private List<ConnectionData> connectionsList;
+    private List<ConnectionData> connectionsList = new List<ConnectionData>();
 
     private byte[] rxBuffer = new byte[1024*25];
     private byte[] jpgCpy;
@@ -257,11 +257,20 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
         // check to make sure theConnection is not null
         if(theConnection == null){
-
+          String message = "failed to locate the bluetooth device.";
+          JSONObject json = new JSONObject();
+          try{
+            json.put("message", message);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            return;
+          }catch (JSONException e) {
+              e.printStackTrace();
+              return;
+          }
         }
 
-        System.out.format("Bytes available to be read: %d\n", mInputStream.available());
-        int length = mInputStream.read(rxBuffer);
+        System.out.format("Bytes available to be read: %d\n", theConnection.mInputStream.available());
+        int length = theConnection.mInputStream.read(rxBuffer);
         jpgCpy = new byte[length];
 
         for(int i = 0; i < length; i++){
