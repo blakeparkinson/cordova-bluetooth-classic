@@ -13,7 +13,7 @@
 - (void)read: (CDVInvokedUrlCommand*)command;
 
 @property (nonatomic, strong) NSMutableArray*       activeConnections;
-@property (nonatomic, strong) NSMutableArray*       callbackDictionary;
+@property (nonatomic, strong) NSMutableDictionary*       callbackDictionary;
 
 @end
 
