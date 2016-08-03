@@ -22,6 +22,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.cordova.CallbackContext;
+
 import java.util.*;
 
 public class BluetoothClassicPlugin extends CordovaPlugin {
@@ -125,7 +133,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       } catch (IOException e) {
           e.printStackTrace();
 
-          theConnection.mState = STATE_DISCONNECTED;
+          theConnection.mState = State.STATE_DISCONNECTED;
           String message = "failed to connect to write to connected bluetooth device.";
           JSONObject json = new JSONObject();
           try{
@@ -207,7 +215,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             theConnection.mOutputStream = theConnection.mSocket.getOutputStream();
             theConnection.mInputStream = theConnection.mSocket.getInputStream();
             theConnection.mConnectCallback = callbackContext;
-            theConnection.mState = STATE_CONNECTED;
+            theConnection.mState = State.STATE_CONNECTED;
 
             connectionsList.add(theConnection);
 
@@ -221,13 +229,13 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
             try {
               System.out.format("Classic connect attempt 1 failed. Entering fallback. Attempting to connect to device: %s", macAddress);
-              theConnection.mSocket = (BluetoothSocket) theConnection.mDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
+              theConnection.mSocket = (BluetoothSocket) theConnection.mDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(theConnection.mDevice,1);
               theConnection.mSocket.connect();
             } catch (Exception e2){
               try {
               theConnection.mSocket.close();
               theConnection.mSocket = null;
-              theConnection.mState = STATE_DISCONNECTED;
+              theConnection.mState = State.STATE_DISCONNECTED;
             } catch (IOException e3){
               e3.printStackTrace();
             }
@@ -240,10 +248,10 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     }
 
     private void cmdDisconnect(ConnectionData theConnection) {
-        if (theConnection.mState != STATE_DISCONNECTED) {
+        if (theConnection.mState != State.STATE_DISCONNECTED) {
             try {theConnection.mOutputStream.close();} catch (Exception e) {}
             try {theConnection.mInputStream.close();} catch (Exception e) {}
-            theConnection.mState = STATE_DISCONNECTED;
+            theConnection.mState = State.STATE_DISCONNECTED;
         }
     }
 
@@ -289,7 +297,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     private ConnectionData getConnection(String address){
       for (int i = 0; i < connectionsList.size(); i++) {
-        ConnectionData cd = list.get(i);
+        ConnectionData cd = connectionsList.get(i);
         if(cd.macAddress.equals(address)){
           return cd;
         }
