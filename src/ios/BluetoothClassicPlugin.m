@@ -71,8 +71,18 @@
 
 //return connection status
 - (void)isConnected:(CDVInvokedUrlCommand*)command{
+  NSString* mac = [command.arguments objectAtIndex:0];
 
     CDVPluginResult *pluginResult = nil;
+
+    bool connected;
+
+    for (ConnectionData *cd in _activeConnections){
+
+      if([cd.btMAC isEqualToString:mac]){
+        connected = YES;
+      }
+    }
 
     if(connected){
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
