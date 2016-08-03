@@ -1,5 +1,3 @@
-package BTCPlugin;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +20,40 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.cordova.CallbackContext;
+
 import java.util.*;
+
+private static final int STATE_DISCONNECTED = 0;
+private static final int STATE_CONNECTING = 1;
+private static final int STATE_CONNECTED = 2;
+private static final int STATE_TEST = 3;
+
+public class ConnectionData {
+
+  public BluetoothDevice  mDevice;
+  public BluetoothSocket  mSocket;
+  public InputStream      mInputStream;
+  public OutputStream     mOutputStream;
+
+  public CallbackContext  mConnectCallback;
+
+  public String macAddress;
+
+  public int mState;
+
+  public ConnectionData(){
+    mState = STATE_CONNECTING;
+  }
+
+}
+
 
 public class BluetoothClassicPlugin extends CordovaPlugin {
 
