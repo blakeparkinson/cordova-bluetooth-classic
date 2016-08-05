@@ -4,13 +4,3 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-BTCPlugin	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^package BTCPlugin;$/;"	package	line:1
-ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^public class ConnectionData {$/;"	class	line:11
-mDevice	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothDevice  mDevice;$/;"	field	line:13	class:ConnectionData
-mSocket	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public BluetoothSocket  mSocket;$/;"	field	line:14	class:ConnectionData
-mInputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public InputStream      mInputStream;$/;"	field	line:15	class:ConnectionData
-mOutputStream	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public OutputStream     mOutputStream;$/;"	field	line:16	class:ConnectionData
-mConnectCallback	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public CallbackContext  mConnectCallback;$/;"	field	line:18	class:ConnectionData
-macAddress	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public String macAddress;$/;"	field	line:20	class:ConnectionData
-mState	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public State mState;$/;"	field	line:22	class:ConnectionData
-ConnectionData	/Users/macmin/Documents/cordova-bluetooth-classic/src/android/ConnectionData.java	/^  public ConnectionData(){$/;"	method	line:24	class:ConnectionData	signature:()

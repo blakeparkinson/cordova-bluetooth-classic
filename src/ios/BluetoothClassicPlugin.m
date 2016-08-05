@@ -211,6 +211,8 @@
 
             return;
         }
+    }else{
+      [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
     }
 }
 
