@@ -32,11 +32,15 @@ module.exports = {
 
   // Disconnect does not really work as intended on iOS due to the way GC is handled
   // Its more of a polite 'I am done with this, thanks' than a closure of the phy
-  disconnect: function(success, failure){
+  disconnect: function(id, success, failure){
     cordova.exec(success, failure, "BluetoothClassicPlugin", "disconnect", [id]);
   },
 
   isConnected: function (id, success, failure) {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "isConnected", [id]);
+  },
+
+  showPicker: function (success, failure) {
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "showPicker");
   }
 };

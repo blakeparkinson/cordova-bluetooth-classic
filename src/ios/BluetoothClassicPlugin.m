@@ -66,6 +66,7 @@
     [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
 
     [_callbackDictionary setObject:command forKey:[command.arguments objectAtIndex:0] ];
+    connectCallback = command;
     [self connectToAccessoryMulti];
 }
 
@@ -133,6 +134,15 @@
     // [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     // [[_dataSession inputStream] setDelegate:nil];
     // [[_dataSession inputStream] close];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)showPicker: (CDVInvokedUrlCommand*)command {
+    CDVPluginResult *pluginResult = nil;
+
+    [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -212,7 +222,8 @@
             return;
         }
     }else{
-      [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
     }
 }
 
