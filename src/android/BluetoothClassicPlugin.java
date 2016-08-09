@@ -84,6 +84,9 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       else if (action.equals(DISCONNECT)){
         disconnect(args, callbackContext);
       }
+      else if (action.equals(IS_CONNECTED)){
+        isConnected(args, callbackContext);
+      }
       else{
         validAction = false;
         callbackContext.error("Invalid command");
@@ -293,6 +296,35 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
         }
+    }
+
+    private void isConnected(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+      String macAddress = args.getString(0);
+      ConnectionData theConnection = getConnection(macAddress);
+
+      if(theConnection == null || theConnection.mState != State.STATE_CONNECTED){
+        String message = "failed to locate the bluetooth device.";
+        JSONObject json = new JSONObject();
+        try{
+          json.put("message", message);
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          return;
+        }catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+      }
+
+      try{
+        String message = String.format("Requested device is connected");
+        JSONObject json = new JSONObject();
+        json.put("message", message);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+      }catch (JSONException e) {
+          e.printStackTrace();
+          return;
+      }
+
     }
 
     private ConnectionData getConnection(String address){
