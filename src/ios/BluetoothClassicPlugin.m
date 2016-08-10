@@ -66,7 +66,7 @@
     [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
 
     [_callbackDictionary setObject:command forKey:[command.arguments objectAtIndex:0] ];
-    connectCallback = command;
+    _connectCallback = command;
     [self connectToAccessoryMulti];
 }
 
