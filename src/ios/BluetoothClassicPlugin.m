@@ -223,8 +223,9 @@
         }
     }else{
       NSString* errorMessage = @"Need to show picker";
+      CDVPluginResult *pluginResult = nil;
       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorMessage];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
     }
 }
 
