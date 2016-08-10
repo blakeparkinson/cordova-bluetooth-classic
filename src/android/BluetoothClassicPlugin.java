@@ -219,6 +219,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             theConnection.mInputStream = theConnection.mSocket.getInputStream();
             theConnection.mConnectCallback = callbackContext;
             theConnection.mState = State.STATE_CONNECTED;
+            theConnection.macAddress = macAddress;
 
             connectionsList.add(theConnection);
 
