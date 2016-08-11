@@ -1,4 +1,3 @@
-package BTCPlugin;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -32,7 +31,34 @@ import org.apache.cordova.CallbackContext;
 
 import java.util.*;
 
+
 public class BluetoothClassicPlugin extends CordovaPlugin {
+
+  private enum State {
+    STATE_DISCONNECTED,
+    STATE_CONNECTING,
+    STATE_CONNECTED,
+    STATE_TEST
+  }
+
+  private class ConnectionData {
+
+    public BluetoothDevice  mDevice;
+    public BluetoothSocket  mSocket;
+    public InputStream      mInputStream;
+    public OutputStream     mOutputStream;
+
+    public CallbackContext  mConnectCallback;
+
+    public String macAddress;
+
+    public State mState;
+
+    public ConnectionData(){
+      mState = State.STATE_CONNECTING;
+    }
+
+  }
 
     // actions
     private static final String CONNECT = "connect";
