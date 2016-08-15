@@ -30,8 +30,6 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/State.java" target-dir="src/com/alpinelabs/cordova/BluetoothClassic" />
-        <source-file src="src/android/ConnectionData.java" target-dir="src/com/alpinelabs/cordova/BluetoothClassic" />
         <source-file src="src/android/BluetoothClassicPlugin.java" target-dir="src/com/alpinelabs/cordova/BluetoothClassic" />
 
     </platform>

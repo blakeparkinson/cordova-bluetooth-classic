@@ -93,7 +93,7 @@
     [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
 
     [_callbackDictionary setObject:command forKey:[command.arguments objectAtIndex:0] ];
-    connectCallback = command;
+    _connectCallback = command;
     [self connectToAccessoryMulti];
 }
 
@@ -230,8 +230,9 @@
         }
     }else{
       NSString* errorMessage = @"Need to show picker";
+      CDVPluginResult *pluginResult = nil;
       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorMessage];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallback.callbackId];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:_connectCallback.callbackId];
     }
 }
 
