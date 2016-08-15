@@ -18,11 +18,19 @@
 
     connected = NO;
 
-    [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(accessoryNotification:)
-                                                 name:nil
+                                             selector:@selector(connectNotification:)
+                                                 name:EAAccessoryDidConnectNotification
                                                object:[EAAccessoryManager sharedAccessoryManager]];
+
+     [[NSNotificationCenter defaultCenter] addObserver:self
+                                              selector:@selector(disconnectNotification:)
+                                                  name:EAAccessoryDidDisconnectNotification
+                                                object:[EAAccessoryManager sharedAccessoryManager]];
+
+    [[EAAccessoryManager sharedAccessoryManager] registerForLocalNotifications];
+
+
 
     _activeConnections = [[NSMutableArray alloc] init];
     _callbackDictionary = [[NSMutableDictionary alloc] init];
@@ -32,6 +40,25 @@
 
 - (void)onAppTerminate{
     free(rxBuffer);
+}
+
+- (void)connectNotification:(NSNotification *)notification{
+  NSLog(@"Received an EAAccessory connection notification");
+  // [self connectToAccessoryMulti];
+}
+
+- (void)disconnectNotification:(NSNotification *)notification{
+  NSLog(@"Received an EAAcessory disconnection notification");
+  EAAccessory* accessory = [notification.userInfo objectForKey:EAAccessoryKey];
+  for(ConnectionData* cd in _activeConnections){
+      if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]){
+          [_activeConnections removeObject:cd];
+          NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
+          CDVPluginResult *pluginResult = nil;
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:cd.connectCallback.callbackId];
+      }
+  }
 }
 
 - (BOOL)isNewAccessory:(EAAccessory *)btAcc{
@@ -147,26 +174,6 @@
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
-
-- (void)accessoryNotification:(NSNotification *)notification{
-    // if accessory has connected try to open data session
-    if ([[notification name] isEqualToString:@"EAAccessoryDidConnectNotification"])
-        [self connectToAccessoryMulti];
-    // if accessory has disconnected, tell user and release data session
-    if ([[notification name] isEqualToString:@"EAAccessoryDidDisconnectNotification"]){
-        EAAccessory* accessory = [notification.userInfo objectForKey:EAAccessoryKey];
-        for(ConnectionData* cd in _activeConnections){
-            if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]){
-                [_activeConnections removeObject:cd];
-                NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
-                CDVPluginResult *pluginResult = nil;
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:cd.connectCallback.callbackId];
-            }
-        }
-    }
-}
-
 
 - (void)connectToAccessoryMulti{
     NSArray *accessories = [[EAAccessoryManager sharedAccessoryManager]
