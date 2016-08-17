@@ -8,6 +8,7 @@
 }
 
 @property (nonatomic, strong) CDVInvokedUrlCommand* connectCallback;
+@property (nonatomic, strong) CDVInvokedUrlCommand* pickerCallback;
 
 @end
 
@@ -167,12 +168,24 @@
 }
 
 - (void)showPicker: (CDVInvokedUrlCommand*)command {
-    CDVPluginResult *pluginResult = nil;
+    // CDVPluginResult *pluginResult = nil;
 
-    [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:nil];
+    _pickerCallback = command;
 
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    EABluetoothAccessoryPickerCompletion pickerResult = ^void(NSError *error){
+      CDVPluginResult *pluginResult = nil;
+      if(error == nil){ // no error
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+      }else{
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+      }
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:_pickerCallback.callbackId];
+    };
+
+    [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:pickerResult];
+
+    // pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    // [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)connectToAccessoryMulti{
