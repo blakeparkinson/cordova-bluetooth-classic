@@ -93,7 +93,7 @@
 - (void)connect: (CDVInvokedUrlCommand*)command {
 
         for(ConnectionData* cd in _activeConnections) {
-                if([cd.btMac isEqualToString:[command.arguments objectAtIndex:0]]) {
+                if([cd.btMAC isEqualToString:[command.arguments objectAtIndex:0]]) {
                         CDVPluginResult *pluginResult = nil;
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
