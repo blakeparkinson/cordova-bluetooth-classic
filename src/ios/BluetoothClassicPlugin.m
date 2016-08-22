@@ -104,16 +104,16 @@
 
     CDVPluginResult *pluginResult = nil;
 
-    bool connected;
+    bool isConnected = NO;
 
     for (ConnectionData *cd in _activeConnections){
 
       if([cd.btMAC isEqualToString:mac]){
-        connected = YES;
+        isConnected = YES;
       }
     }
 
-    if(connected){
+    if(isConnected){
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }else{
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
