@@ -267,7 +267,6 @@
             [[cd.btSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
             [[cd.btSession inputStream] close];
             [_activeConnections removeObject:cd];
-            NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
         }
 
         CDVPluginResult *pluginResult = nil;
