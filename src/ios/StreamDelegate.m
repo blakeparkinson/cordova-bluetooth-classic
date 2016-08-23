@@ -9,7 +9,7 @@
     if(_parent.btBuffer == nil){
       _parent.btBuffer = [[NSMutableData alloc] init];
     }
-    
+
     NSInteger bytesRead = [[_parent.btSession inputStream] read:rxBuffer maxLength:(2048)];
     [_parent.btBuffer appendBytes:(void *)rxBuffer length:bytesRead];
 

@@ -263,15 +263,18 @@
 
 // close the session with the accessory.
 - (void)closeSession:(CDVInvokedUrlCommand *)command {
+        for(ConnectionData* cd in _activeConnections) {
+                if([cd.btAccessory.serialNumber isEqualToString:accessory.serialNumber]) {
+                        [[cd.btSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+                        [[cd.btSession inputStream] close];
+                        [_activeConnections removeObject:cd];
+                        NSLog(@"Sucessfully removed accessory %@ from active connections list", accessory.serialNumber);
+                }
+        }
 
-        // [[_dataSession inputStream] close];
-        // [[_dataSession inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        // [[_dataSession inputStream] setDelegate:nil];
-        // [[_dataSession outputStream] close];
-        // [[_dataSession outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        // [[_dataSession outputStream] setDelegate:nil];
-        //
-        // _dataSession = nil;
+        CDVPluginResult *pluginResult = nil;
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
