@@ -185,7 +185,7 @@
                 if(error == nil) { // no error
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                 }else{
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:error.code];
                 }
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:_pickerCallback.callbackId];
         };
