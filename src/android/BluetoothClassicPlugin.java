@@ -120,6 +120,31 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       return validAction;
     }
 
+    private void resetConnection(CordovaArgs args) throws JSONException {
+      String macAddress = args.getString(0);
+      System.out.println("Restting Connections");
+      ConnectionData theConnection = getConnection(macAddress);
+      if (theConnection != null){
+        System.out.println("Found a connection. Closing sockets");
+
+        if (theConnection.mInputStream != null) {
+                try {theConnection.mInputStream.close();} catch (Exception e) {}
+                theConnection.mInputStream = null;
+        }
+
+        if (theConnection.mOutputStream != null) {
+                try {theConnection.mOutputStream.close();} catch (Exception e) {}
+                theConnection.mOutputStream = null;
+        }
+
+        if (theConnection.mSocket != null) {
+                try {theConnection.mSocket.close();} catch (Exception e) {}
+                theConnection.mSocket = null;
+        }
+      }
+
+      }
+
     private void write(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
       String macAddress = args.getString(0);
 
@@ -199,6 +224,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     private void connect(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
 
+      //resetConnection(args);
       String macAddress = args.getString(0);
 
       ConnectionData theConnection = new ConnectionData();
@@ -225,6 +251,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         JSONObject json = new JSONObject();
         json.put("message", message);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+        System.out.flush();
         return;
 
       }
@@ -235,6 +262,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         JSONObject json = new JSONObject();
         json.put("message", message);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+        System.out.flush();
         return;
       }
 
@@ -253,6 +281,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             JSONObject json = new JSONObject();
             json.put("message", message);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+            System.out.flush();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -273,15 +302,21 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
             JSONObject json = new JSONObject();
             json.put("message", message);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            System.out.flush();
           }
         }
     }
 
     private void cmdDisconnect(ConnectionData theConnection) {
-        if (theConnection.mState != State.STATE_DISCONNECTED) {
+        if (theConnection.mState == null || theConnection.mState != State.STATE_DISCONNECTED) {
             try {theConnection.mOutputStream.close();} catch (Exception e) {}
             try {theConnection.mInputStream.close();} catch (Exception e) {}
+            try {theConnection.mSocket.close();} catch (Exception e) {}
             theConnection.mState = State.STATE_DISCONNECTED;
+            theConnection.mInputStream = null;
+            theConnection.mOutputStream = null;
+            theConnection.mSocket = null;
+            connectionsList.remove(theConnection);
         }
     }
 
@@ -299,6 +334,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
           try{
             json.put("message", message);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            System.out.flush();
             return;
           }catch (JSONException e) {
               e.printStackTrace();
@@ -307,22 +343,35 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
         }
 
         System.out.format("Bytes available to be read: %d\n", theConnection.mInputStream.available());
-        int length = theConnection.mInputStream.read(rxBuffer);
-        jpgCpy = new byte[length];
+        int available = theConnection.mInputStream.available();
+        if(available > 0){
+          int length = theConnection.mInputStream.read(rxBuffer);
+          jpgCpy = new byte[length];
 
-        for(int i = 0; i < length; i++){
-          jpgCpy[i] = rxBuffer[i];
-        }
+          for(int i = 0; i < length; i++){
+            jpgCpy[i] = rxBuffer[i];
+          }
 
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, jpgCpy));
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, jpgCpy));
+          System.out.flush();
+          }
+          else{
+            String message = String.format("failed to read from device. No data to be read.");
+            JSONObject json = new JSONObject();
+            json.put("message", message);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            System.out.flush();
+          }
         }
-        catch(IOException err){
-          err.printStackTrace();
-          String message = String.format("failed to read from device");
-          JSONObject json = new JSONObject();
-          json.put("message", message);
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
-        }
+          catch(IOException err){
+            err.printStackTrace();
+            String message = String.format("failed to read from device");
+            JSONObject json = new JSONObject();
+            json.put("message", message);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+            System.out.flush();
+          }
+
     }
 
     private void isConnected(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
@@ -330,11 +379,13 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       ConnectionData theConnection = getConnection(macAddress);
 
       if(theConnection == null || theConnection.mState != State.STATE_CONNECTED){
+        System.out.format("Device %s is not connected\n", macAddress);
         String message = "failed to locate the bluetooth device.";
         JSONObject json = new JSONObject();
         try{
           json.put("message", message);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
+          System.out.flush();
           return;
         }catch (JSONException e) {
             e.printStackTrace();
@@ -343,10 +394,12 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
       }
 
       try{
+        System.out.format("Device %s has good connection\n", macAddress);
         String message = String.format("Requested device is connected");
         JSONObject json = new JSONObject();
         json.put("message", message);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+        System.out.flush();
       }catch (JSONException e) {
           e.printStackTrace();
           return;
