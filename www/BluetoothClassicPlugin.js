@@ -46,5 +46,9 @@ module.exports = {
 
   showPicker: function (success, failure) {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "showPicker");
+  },
+
+  clearCache: function (success, fialure) {
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "clearCache");
   }
 };
