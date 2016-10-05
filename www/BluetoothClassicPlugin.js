@@ -49,6 +49,6 @@ module.exports = {
   },
 
   clearCache: function (success, failure) {
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "clearCache");
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "clearCache", []);
   }
 };
