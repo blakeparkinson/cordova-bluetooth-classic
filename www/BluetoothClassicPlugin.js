@@ -37,7 +37,7 @@ module.exports = {
   },
 
   closeSession: function(success, failure){
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "closeSession");
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "closeSession", []);
   },
 
   isConnected: function (id, success, failure) {
@@ -45,10 +45,10 @@ module.exports = {
   },
 
   showPicker: function (success, failure) {
-    cordova.exec(success, failure, "BluetoothClassicPlugin", "showPicker");
+    cordova.exec(success, failure, "BluetoothClassicPlugin", "showPicker", []);
   },
 
-  clearCache: function (success, fialure) {
+  clearCache: function (success, failure) {
     cordova.exec(success, failure, "BluetoothClassicPlugin", "clearCache");
   }
 };
