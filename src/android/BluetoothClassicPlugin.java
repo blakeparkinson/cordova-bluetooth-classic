@@ -97,14 +97,10 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
   }
 
   public void run() {
-   // This sets up a listener for bluetooth actions, we don't use it for much
-   /*String action = "android.bleutooth.device.action.UUID";
-   IntentFilter filter = new IntentFilter(action);
-   this.cordova.getActivity().getApplicationContext().registerReceiver(mReceiver, filter);*/
-
 
    ConnectionData theConnection = new ConnectionData();
    theConnection.mDevice = mmDevice;
+   theConnection.mConnectCallback = mConnectCallback;
    try {
 
     System.out.println("Retrieving socket 1");
@@ -122,7 +118,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
 
     try {
      String reportResult = "failure";
-     mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, null);
+     mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, theConnection);
     } catch (Exception callbackE) {
      // If it fails, write the error message to screen
      callbackE.printStackTrace();
@@ -141,7 +137,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     System.out.flush();
     try {
      String reportResult = "failure";
-     mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, null);
+     mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, theConnection);
     } catch (Exception callbackE) {
      // If it fails, write the error message to screen
      callbackE.printStackTrace();
@@ -154,7 +150,6 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     theConnection.mSocket.connect();
     theConnection.mOutputStream = theConnection.mSocket.getOutputStream();
     theConnection.mInputStream = theConnection.mSocket.getInputStream();
-    theConnection.mConnectCallback = mConnectCallback;
     //theConnection.mState = mState.STATE_CONNECTED;
     theConnection.macAddress = theConnection.mDevice.getAddress();
 
@@ -192,7 +187,7 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
      System.out.flush();
      try {
       String reportResult = "failure";
-      mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, null);
+      mSpawner.getClass().getMethod(mSuccessMethod, String.class, ConnectionData.class).invoke(mSpawner, reportResult, theConnection);
      } catch (Exception callbackE) {
       // If it fails, write the error message to screen
       callbackE.printStackTrace();
@@ -420,16 +415,14 @@ public class BluetoothClassicPlugin extends CordovaPlugin {
     e.printStackTrace();
    }
   } else {
+    System.out.println("Connection Failed");
+    System.out.flush();
    newConnection.mState = State.STATE_DISCONNECTED;
-   System.out.println("Connection Failed");
-   System.out.flush();
-
-
    String message = String.format("Was unable to connect to bluetooth classic device.");
    JSONObject json = new JSONObject();
    try {
     json.put("message", message);
-    newConnection.mConnectCallback.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+    newConnection.mConnectCallback.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, json));
    } catch (Exception e) {
     // If it fails, write the error message to screen
     e.printStackTrace();
