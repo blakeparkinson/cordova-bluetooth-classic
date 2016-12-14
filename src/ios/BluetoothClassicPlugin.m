@@ -183,9 +183,10 @@
         EABluetoothAccessoryPickerCompletion pickerResult = ^void (NSError *error){
                 CDVPluginResult *pluginResult = nil;
                 if(error == nil) { // no error
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                  [self connectToAccessoryMulti];
+                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                 }else{
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:error.code];
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
                 }
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:_pickerCallback.callbackId];
         };
