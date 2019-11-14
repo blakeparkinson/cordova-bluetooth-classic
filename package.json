@@ -1,0 +1,26 @@
+{
+  "name": "cordova-bluetooth-classic",
+  "version": "0.1.9",
+  "description": "Cordova plugin to do bluetooth classic interactions",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blakeparkinson/cordova-bluetooth-classic.git"
+  },
+  "keywords": [
+    "cordova",
+    "ecosystem:cordova",
+    "app",
+    "version",
+    "appversion",
+    "plugin"
+  ],
+  "author": "blakeparkinson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blakeparkinson/cordova-bluetooth-classic/issues"
+  },
+  "homepage": "https://github.com/blakeparkinson/cordova-bluetooth-classic#readme"
+}
